@@ -184,6 +184,15 @@ export const SITE_TREE: SiteNode = {
         'These terms apply to your use of this website (the "Site") at anviq.net.',
     },
     {
+      path: "/accessibility",
+      name: "Accessibility statement",
+      kind: "file",
+      route: "/explore/accessibility",
+      // Accessibility.tsx, first sentence.
+      summary:
+        "Anviq LLC wants everyone to be able to use this website (anviq.net), including people who use screen readers, keyboards, voice control, magnification or high contrast settings.",
+    },
+    {
       // Grouping node for the external contact links. No route, so the
       // audit script skips it.
       path: "/contact",

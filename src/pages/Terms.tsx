@@ -19,7 +19,7 @@ export function Terms() {
       </p>
 
       <h2>2. No guaranteed outcome</h2>
-      <div className="my-5 rounded-lg border border-ash bg-chalk p-5">
+      <div className="my-5 rounded-lg border border-[var(--line)] bg-[var(--sidebar)] p-5">
         <p className="m-0">
           <strong>
             Nothing on this Site is a guarantee, forecast, or promise of a specific result, timeline, or cost

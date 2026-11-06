@@ -57,6 +57,7 @@ import { DocumentPage } from "@/components/DocumentPage";
 import { Privacy } from "@/pages/Privacy";
 import { Cookies } from "@/pages/Cookies";
 import { Terms } from "@/pages/Terms";
+import { Accessibility } from "@/pages/Accessibility";
 import { FilesBrowse, FilesOverview, FilesProjects, FilesTabBar, FilesToolbar, type FilesSort, type FilesView } from "@/components/FilesNavigation";
 import { SiteNavigator } from "@/components/SiteNavigator";
 import { recordBookingClick, recordEmailCopy, recordSearchZeroResults } from "@/lib/guide";
@@ -144,6 +145,26 @@ const SECTION_META: Record<string, { title: string; description: string }> = {
   activity: {
     title: "Activity | Anviq",
     description: "Public engineering activity and recent work from Anviq.",
+  },
+  browse: {
+    title: "Browse | Anviq",
+    description: "Browse the Anviq site: services, selected work, approach, engagement and information.",
+  },
+  privacy: {
+    title: "Privacy policy | Anviq",
+    description: "How anviq.net handles personal data, what it collects, why and your rights.",
+  },
+  cookies: {
+    title: "Cookie policy | Anviq",
+    description: "anviq.net sets no cookies. What third parties are involved and how to control cookies.",
+  },
+  accessibility: {
+    title: "Accessibility statement | Anviq",
+    description: "How anviq.net meets WCAG 2.2 AA, what we have tested and how to report a barrier.",
+  },
+  terms: {
+    title: "Terms and disclaimer | Anviq",
+    description: "The terms for using anviq.net.",
   },
   about: {
     title: "About Anviq",
@@ -321,7 +342,7 @@ function ContactLink({
     </a>
   );
 }
-function Navigation({ active }: { active: string }) {
+function Navigation({ active, label = "Explore Anviq" }: { active: string; label?: string }) {
   const reducedMotion = useReducedMotion();
   const pillTransition = reducedMotion ? { duration: 0 } : NAV_PILL_SPRING;
   const groups = [
@@ -329,7 +350,7 @@ function Navigation({ active }: { active: string }) {
     { title: "Information", items: NAV.slice(4) },
   ];
   return (
-    <nav aria-label="Explore Anviq" className="explorer-nav">
+    <nav aria-label={label} className="explorer-nav">
       {groups.map(({ title, items }) => (
         <div className="nav-group" key={title}>
           <p className="nav-group-label">{title}</p>
@@ -1521,6 +1542,7 @@ export function Home() {
     privacy: "Privacy Policy",
     cookies: "Cookie Policy",
     terms: "Terms & Disclaimer",
+    accessibility: "Accessibility",
   };
   const label =
     NAV.find((item) => item.id === active)?.label ??
@@ -1662,10 +1684,13 @@ export function Home() {
     case "terms":
       content = <Terms />;
       break;
+    case "accessibility":
+      content = <Accessibility />;
+      break;
     case "browse":
       content = filesLayout ? <FilesBrowse /> : (
         <DocumentPage title="Browse Anviq">
-          <Navigation active="browse" />
+          <Navigation active="browse" label="Browse Anviq" />
           <Link className="internal-link" to="/explore/about">
             About Anviq
             <ArrowRight size={18} aria-hidden="true" />
@@ -1780,7 +1805,7 @@ export function Home() {
             {content}
           </ExplorerPane>
         </main>
-        <footer className="explorer-status">
+        <div className="explorer-status" role="region" aria-label="Page status">
           <nav aria-label="Current location">
             <Link to="/">Anviq</Link>
             <ChevronRight size={14} aria-hidden="true" />
@@ -1804,7 +1829,7 @@ export function Home() {
               ? `${WORK_SELECTED.length} projects`
               : "IT consulting and software"}
           </span>
-        </footer>
+        </div>
         <SiteNavigator />
       </div>
       <footer className="site-footer">
@@ -1813,6 +1838,7 @@ export function Home() {
           <Link to="/explore/privacy">Privacy</Link>
           <Link to="/explore/cookies">Cookies</Link>
           <Link to="/explore/terms">Terms &amp; disclaimer</Link>
+          <Link to="/explore/accessibility">Accessibility</Link>
         </nav>
         <div className="site-footer-right">
           <nav className="social-links" aria-label="Social">
