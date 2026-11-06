@@ -24,7 +24,7 @@ export function Privacy() {
         <li>
           Email: <a href="mailto:lvoss@anviq.net">lvoss@anviq.net</a>
         </li>
-        <li>30 N Gould St #69062, Sheridan, WY 82801, USA</li>
+        <li>30 N Gould St 69062, Sheridan, WY 82801, USA</li>
       </ul>
 
       <h2>2. What this Site does and does not collect</h2>

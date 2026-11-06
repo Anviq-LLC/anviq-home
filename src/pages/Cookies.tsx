@@ -57,7 +57,7 @@ export function Cookies() {
       <h2>5. Contact</h2>
       <p>
         Questions about cookies: <a href="mailto:lvoss@anviq.net">lvoss@anviq.net</a>. Anviq LLC,
-        30 N Gould St #69062, Sheridan, WY 82801, USA. See also our{' '}
+        30 N Gould St 69062, Sheridan, WY 82801, USA. See also our{' '}
         <a href="/explore/privacy">Privacy Policy</a>.
       </p>
       </div>

@@ -90,7 +90,7 @@ export function Terms() {
       <h2>11. Contact</h2>
       <p>
         Questions about these terms: <a href="mailto:lvoss@anviq.net">lvoss@anviq.net</a>. Anviq LLC,
-        30 N Gould St #69062, Sheridan, WY 82801, USA. See also our{' '}
+        30 N Gould St 69062, Sheridan, WY 82801, USA. See also our{' '}
         <a href="/explore/privacy">Privacy Policy</a> and <a href="/explore/cookies">Cookie Policy</a>.
       </p>
       </div>
