@@ -1585,7 +1585,7 @@ export function Home() {
     setMeta('meta[property="og:description"]', { property: "og:description" }, page.description);
     setMeta('meta[property="og:url"]', { property: "og:url" }, canonical);
     setMeta('meta[property="og:type"]', { property: "og:type" }, currentProject ? "article" : "website");
-    setMeta('meta[name="twitter:card"]', { name: "twitter:card" }, "summary");
+    setMeta('meta[name="twitter:card"]', { name: "twitter:card" }, "summary_large_image");
     setMeta('meta[name="twitter:title"]', { name: "twitter:title" }, page.title);
     setMeta('meta[name="twitter:description"]', { name: "twitter:description" }, page.description);
     let canonicalLink = document.head.querySelector<HTMLLinkElement>('link[rel="canonical"]');
