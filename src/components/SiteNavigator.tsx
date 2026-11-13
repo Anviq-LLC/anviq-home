@@ -1,6 +1,7 @@
-import { useSyncExternalStore } from "react";
-import { Terminal } from "@/components/Terminal";
-import { MobileChat } from "@/components/MobileChat";
+import { lazy, Suspense, useSyncExternalStore } from "react";
+
+const Terminal = lazy(() => import("@/components/Terminal").then((m) => ({ default: m.Terminal })));
+const MobileChat = lazy(() => import("@/components/MobileChat").then((m) => ({ default: m.MobileChat })));
 
 // Keep the terminal for true desktop workspaces. iPadOS can report a wide
 // desktop-sized viewport in landscape, so width alone is not enough: the
@@ -19,5 +20,5 @@ const getServerSnapshot = () => false;
 // never render both or neither.
 export function SiteNavigator() {
   const desktop = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
-  return desktop ? <Terminal /> : <MobileChat />;
+  return <Suspense fallback={null}>{desktop ? <Terminal /> : <MobileChat />}</Suspense>;
 }
