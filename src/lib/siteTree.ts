@@ -42,11 +42,11 @@ export const SITE_TREE: SiteNode = {
   children: [
     {
       path: "/services",
-      name: "Services",
+      name: "What we do",
       kind: "file",
       route: "/explore/services",
       // Services h1 (DocumentPage title), `function Services()`.
-      summary: "Three things, one point of contact.",
+      summary: "What we do, in three parts.",
     },
     {
       path: "/projects",

@@ -61,7 +61,7 @@ import { Terms } from "@/pages/Terms";
 import { Accessibility } from "@/pages/Accessibility";
 import { FilesBrowse, FilesOverview, FilesProjects, FilesTabBar, FilesToolbar, type FilesSort, type FilesView } from "@/components/FilesNavigation";
 import { SiteNavigator } from "@/components/SiteNavigator";
-import { AppLauncher, AppLink } from "@/components/AppLauncher";
+import { AppIcon, AppLauncher, AppLink } from "@/components/AppLauncher";
 import { recordBookingClick, recordEmailCopy, recordSearchZeroResults } from "@/lib/guide";
 import { ZERO_RESULTS_HINT } from "@/lib/tone";
 import { queryWordsMatch } from "@/lib/suggest";
@@ -388,10 +388,6 @@ function Overview() {
   return (
     <div className="overview-page">
       <section className="welcome-section" aria-labelledby="welcome-title">
-        <div className="welcome-label">
-          <FileText size={31} strokeWidth={1.75} aria-hidden="true" />
-          <span>Welcome to Anviq</span>
-        </div>
         <h1 id="welcome-title">Systems built to hold.</h1>
         <p className="intro">
           IT consulting and software. Workflow, integration, and
@@ -617,7 +613,7 @@ function Services() {
       <div className="document-sections">
         {APPS.map((app, index) => (
           <section id={`service-${index}`} key={app.id} className="service-detail app-detail">
-            <img src={app.icon} alt="" width="64" height="64" />
+            <span className="app-detail-icon"><AppIcon app={app} /></span>
             <div>
               <h2>{app.name}</h2>
               <p>{app.body}</p>

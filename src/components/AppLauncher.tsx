@@ -6,14 +6,21 @@ import { APPS } from "@/data/content";
 type App = (typeof APPS)[number];
 type Box = { left: number; top: number; size: number };
 
-const HOP_MS = 340;
-const NAVIGATE_MS = 760;
+const NAVIGATE_MS = 140;
 
-// Click: the icon hops, grows into a full-screen splash in the app's colours,
-// then the site opens with the same splash so the two read as one movement.
+export function AppIcon({ app }: { app: App }) {
+  return (
+    <picture>
+      <source media="(prefers-color-scheme: dark)" srcSet={app.icon.replace(".svg", "-dark.svg")} />
+      <img src={app.icon} alt="" width="112" height="112" draggable="false" style={{ width: "100%", height: "100%" }} />
+    </picture>
+  );
+}
+
+// Click: the icon grows into a full-screen splash while the site starts loading,
+// and the site opens with the same splash so the two read as one movement.
 export function AppLink({ app, className, children }: { app: App; className?: string; children: ReactNode }) {
   const reduced = useReducedMotion();
-  const [hop, setHop] = useState(false);
   const [box, setBox] = useState<Box | null>(null);
   const [open, setOpen] = useState(false);
 
@@ -22,7 +29,6 @@ export function AppLink({ app, className, children }: { app: App; className?: st
       if (event.persisted) {
         setBox(null);
         setOpen(false);
-        setHop(false);
       }
     };
     window.addEventListener("pageshow", reset);
@@ -38,14 +44,10 @@ export function AppLink({ app, className, children }: { app: App; className?: st
   function launch(event: MouseEvent<HTMLAnchorElement>) {
     if (reduced || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
     event.preventDefault();
-    if (hop || box) return;
-    const target = event.currentTarget;
-    const icon = target.querySelector<HTMLElement>(".app-icon") ?? target;
-    setHop(true);
-    window.setTimeout(() => {
-      const rect = icon.getBoundingClientRect();
-      setBox({ left: rect.left, top: rect.top, size: rect.width });
-    }, HOP_MS);
+    if (box) return;
+    const icon = event.currentTarget.querySelector<HTMLElement>(".app-icon") ?? event.currentTarget;
+    const rect = icon.getBoundingClientRect();
+    setBox({ left: rect.left, top: rect.top, size: rect.width });
     window.setTimeout(() => {
       window.location.href = app.href;
     }, NAVIGATE_MS);
@@ -59,22 +61,16 @@ export function AppLink({ app, className, children }: { app: App; className?: st
 
   return (
     <>
-      <a
-        className={`${className ?? ""}${hop ? " is-hopping" : ""}${box ? " is-launching" : ""}`}
-        href={app.href}
-        onClick={launch}
-      >
+      <a className={`${className ?? ""}${box ? " is-launching" : ""}`} href={app.href} onClick={launch}>
         {children}
       </a>
-      {hop && <p className="sr-only" role="status">Opening {app.name}</p>}
+      {box && <p className="sr-only" role="status">Opening {app.name}</p>}
       {box && (
-        <div
-          className={`app-launch${open ? " is-open" : ""}`}
-          style={{ ...frame, "--l1": app.c1, "--l2": app.c2 } as CSSProperties}
-          aria-hidden="true"
-        >
+        <div className={`app-launch${open ? " is-open" : ""}`} style={frame} aria-hidden="true">
           <div className="app-launch-in">
-            <img src={app.icon} alt="" width="112" height="112" style={{ width: open ? 112 : box.size, height: open ? 112 : box.size }} />
+            <span className="app-launch-icon" style={{ width: open ? 112 : box.size, height: open ? 112 : box.size }}>
+              <AppIcon app={app} />
+            </span>
             <b>{app.name}</b>
           </div>
         </div>
@@ -94,7 +90,7 @@ export function AppLauncher({ headingId, heading = "What we do" }: { headingId: 
         {APPS.map((app) => (
           <AppLink key={app.id} app={app} className="app-tile">
             <span className="app-icon">
-              <img src={app.icon} alt="" width="112" height="112" draggable="false" />
+              <AppIcon app={app} />
             </span>
             <span className="app-name">{app.name}</span>
             <span className="app-tag">{app.tag}</span>

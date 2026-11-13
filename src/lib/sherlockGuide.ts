@@ -73,7 +73,7 @@ const PAGE_GUIDANCE: Record<string, { plain: string; next: GuideStep[] }> = {
     ],
   },
   "/services": {
-    plain: "Services is the translation page: software and automation remove brittle manual work, integration reconnects systems that do not talk, and infrastructure makes the result operable.",
+    plain: "What we do is the translation page: software and automation remove brittle manual work, integration reconnects systems that do not talk, and infrastructure makes the result operable.",
     next: [
       { path: "/projects", reason: "see these ideas proven in real cases" },
       { path: "/approach", reason: "see what delivery looks like" },

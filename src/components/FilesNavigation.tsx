@@ -57,7 +57,7 @@ export function FilesOverview() {
   return <div className="files-overview files-screen">
     <div className="files-page-heading"><h1 className="sr-only">Anviq</h1><Logo /><p>IT consulting and software</p></div>
     <section className="files-welcome-document" aria-labelledby="files-welcome-title">
-      <div className="files-document-heading"><FilesArtwork document /><div><span>Read me</span><h2 id="files-welcome-title">Systems built to hold.</h2></div></div>
+      <h2 id="files-welcome-title">Systems built to hold.</h2>
       <p>Workflow, integration, and infrastructure, AI where it earns its place. End-to-end accountability.</p>
       <a href="https://calendly.com/lvoss-anviq/30min?month=2026-09" target="_blank" rel="noopener noreferrer" onClick={() => recordBookingClick()}>Start a conversation <ArrowRight size={17} aria-hidden="true" /></a>
     </section>

@@ -159,7 +159,7 @@ export function MobileChat() {
       <AnimatePresence initial={false} mode="wait">{open ? <motion.form key="search" className="chat-bar" onSubmit={submit} initial={reducedMotion ? undefined : { opacity: 0, scaleX: 0.45 }} animate={{ opacity: 1, scaleX: 1 }} exit={reducedMotion ? undefined : { opacity: 0, scaleX: 0.45 }} transition={motionOr(reducedMotion, SPRING_MORPH)} style={{ transformOrigin: "right center" }}>
         <span className="chat-bar-mark"><SquareTerminal size={20} aria-hidden="true" /></span>
         <label htmlFor={inputId} className="sr-only">Ask Sherlock about Anviq</label>
-        <input id={inputId} ref={inputRef} type="text" value={input} onChange={(event) => setInput(event.target.value)} placeholder="Ask Sherlock…" autoComplete="off" autoCorrect="off" autoCapitalize="off" spellCheck={false} />
+        <input id={inputId} ref={inputRef} type="text" value={input} onChange={(event) => setInput(event.target.value)} placeholder="Ask Sherlock" autoComplete="off" autoCorrect="off" autoCapitalize="off" spellCheck={false} />
         {input.trim() && <button type="submit" className="chat-send" aria-label="Ask"><ArrowUp size={18} aria-hidden="true" /></button>}
       </motion.form> : <motion.button key="fab" type="button" className="chat-fab" aria-label={badgeName ?? "Open Sherlock"} onClick={engage} initial={reducedMotion ? undefined : { opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} exit={reducedMotion ? undefined : { opacity: 0, scale: 0.8 }} transition={motionOr(reducedMotion, SPRING_MORPH)}><SquareTerminal size={22} aria-hidden="true" /><span className="sherlock-invite" aria-hidden="true">Ask Sherlock</span><SherlockBadge badge={guide.badge} open={false} /></motion.button>}</AnimatePresence>
     </div>

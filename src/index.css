@@ -720,7 +720,7 @@ svg {
   color: var(--term-dim);
 }
 .terminal-thinking-dots::after {
-  content: "…";
+  content: "...";
   display: inline-block;
   width: 1.2em;
   overflow: hidden;
@@ -1427,6 +1427,7 @@ svg {
   margin-top: 23px;
 }
 .welcome-section {
+  padding-top: 10px;
   padding-bottom: 32px;
 }
 .overview-projects,
@@ -3037,28 +3038,25 @@ svg {
 .apps-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; padding: 14px 0 26px; }
 .app-tile { display: flex; flex-direction: column; align-items: center; text-align: center; min-width: 0; padding: 12px 4px 14px; border-radius: 14px; }
 .app-tile:hover { background: var(--hover); }
-.app-icon { display: block; width: clamp(76px, 22vw, 112px); aspect-ratio: 1; transition: transform 220ms cubic-bezier(0.16, 1, 0.3, 1); }
-.app-icon img { display: block; width: 100%; height: 100%; filter: drop-shadow(0 10px 14px rgb(20 30 50 / 22%)); }
-.app-tile:hover .app-icon { transform: translateY(-4px) scale(1.04); }
+.app-icon { display: block; width: clamp(76px, 22vw, 112px); aspect-ratio: 1; transition: transform 180ms cubic-bezier(0.16, 1, 0.3, 1); filter: drop-shadow(0 8px 12px rgb(20 30 50 / 14%)); }
+.app-icon picture, .app-launch-icon picture { display: block; width: 100%; height: 100%; }
+.app-tile:hover .app-icon { transform: translateY(-3px) scale(1.04); }
 .app-tile:active .app-icon { transform: scale(0.94); }
-.app-tile.is-hopping .app-icon { animation: app-hop 340ms ease-out; }
-.app-tile.is-launching .app-icon img { visibility: hidden; }
+.app-tile.is-launching .app-icon { visibility: hidden; }
 .app-name { font-size: 16px; font-weight: 620; margin-top: 10px; line-height: 1.3; }
 .app-tag { color: var(--muted); font-size: 14px; line-height: 1.4; margin-top: 2px; }
-.app-launch { position: fixed; z-index: 1000; display: grid; place-items: center; overflow: hidden; pointer-events: all; transition: left 420ms cubic-bezier(0.5, 0, 0.2, 1), top 420ms cubic-bezier(0.5, 0, 0.2, 1), width 420ms cubic-bezier(0.5, 0, 0.2, 1), height 420ms cubic-bezier(0.5, 0, 0.2, 1), border-radius 420ms cubic-bezier(0.5, 0, 0.2, 1); }
-.app-launch::before { content: ""; position: absolute; inset: 0; background: linear-gradient(160deg, var(--l2), var(--l1)); opacity: 0; transition: opacity 300ms ease-out; }
+.app-launch { position: fixed; z-index: 1000; display: grid; place-items: center; overflow: hidden; pointer-events: all; transition: left 300ms cubic-bezier(0.5, 0, 0.2, 1), top 300ms cubic-bezier(0.5, 0, 0.2, 1), width 300ms cubic-bezier(0.5, 0, 0.2, 1), height 300ms cubic-bezier(0.5, 0, 0.2, 1), border-radius 300ms cubic-bezier(0.5, 0, 0.2, 1); }
+.app-launch::before { content: ""; position: absolute; inset: 0; background: var(--surface); opacity: 0; transition: opacity 220ms ease-out; }
 .app-launch.is-open::before { opacity: 1; }
-.app-launch-in { position: relative; display: grid; justify-items: center; gap: 16px; }
-.app-launch img { display: block; transition: width 420ms cubic-bezier(0.5, 0, 0.2, 1), height 420ms cubic-bezier(0.5, 0, 0.2, 1); }
-.app-launch.is-open img { filter: drop-shadow(0 18px 24px rgb(0 0 0 / 28%)); }
-.app-launch b { opacity: 0; transition: opacity 300ms ease-out 200ms; }
+.app-launch-in { position: relative; display: grid; justify-items: center; gap: 14px; }
+.app-launch-icon { display: block; transition: width 300ms cubic-bezier(0.5, 0, 0.2, 1), height 300ms cubic-bezier(0.5, 0, 0.2, 1); filter: drop-shadow(0 8px 12px rgb(20 30 50 / 14%)); }
+.app-launch b { opacity: 0; color: var(--text); font-size: 16px; font-weight: 620; transition: opacity 200ms ease-out 100ms; }
 .app-launch.is-open b { opacity: 1; }
-.app-launch b { color: #fff; font-size: 17px; font-weight: 650; }
-@keyframes app-hop { 0% { transform: none; } 35% { transform: translateY(-16px); } 60% { transform: none; } 80% { transform: translateY(-6px); } 100% { transform: none; } }
-@media (prefers-reduced-motion: reduce) { .app-icon, .app-launch, .app-launch img { transition: none; } .app-tile.is-hopping .app-icon { animation: none; } }
+@media (prefers-reduced-motion: reduce) { .app-icon, .app-launch, .app-launch-icon { transition: none; } }
 
 .folder-grid-two { grid-template-columns: repeat(2, minmax(0, 1fr)); max-width: 460px; }
 .files-grid-two { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-.app-detail img { width: 64px; height: 64px; flex: none; }
+.app-detail-icon { width: 64px; height: 64px; flex: none; display: block; }
+.app-detail-icon picture { display: block; width: 100%; height: 100%; }
 .app-detail { display: flex; gap: 18px; align-items: flex-start; }
 .app-services { margin: 10px 0 12px; padding-left: 18px; list-style: disc; display: grid; gap: 6px; }
