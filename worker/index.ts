@@ -27,8 +27,10 @@ const SECURITY_HEADERS: Record<string, string> = {
   ].join("; "),
 };
 
-function withSecurityHeaders(response: Response): Response {
+function withSecurityHeaders(response: Response, path = ""): Response {
   const headers = new Headers(response.headers);
+  if (response.ok && path.startsWith("/assets/")) headers.set("Cache-Control", "public, max-age=31536000, immutable");
+  else if (response.ok && path.startsWith("/images/")) headers.set("Cache-Control", "public, max-age=86400");
   for (const [key, value] of Object.entries(SECURITY_HEADERS)) {
     headers.set(key, value);
   }
@@ -124,6 +126,6 @@ export default {
     if (url.pathname === "/api/sherlock") {
       return withSecurityHeaders(await handleSherlock(request, env));
     }
-    return withSecurityHeaders(await env.ASSETS.fetch(request));
+    return withSecurityHeaders(await env.ASSETS.fetch(request), url.pathname);
   },
 };
