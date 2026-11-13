@@ -1,14 +1,14 @@
 import type { ReactNode } from "react";
 import { Link } from "react-router-dom";
 import { motion, useReducedMotion } from "motion/react";
-import { Activity, ArrowRight, BookOpen, ChevronLeft, ChevronRight, CircleHelp, Compass, FileText, Folder, House, Layers, LayoutGrid, List, Mail, PanelLeft, Server, ShieldCheck, Workflow } from "lucide-react";
-import { WORK, WORK_SELECTED } from "@/data/content";
+import { Activity, ArrowRight, BookOpen, ChevronLeft, ChevronRight, CircleHelp, Compass, FileText, Folder, House, Layers, LayoutGrid, List, Mail, PanelLeft, ShieldCheck } from "lucide-react";
+import { WORK_SELECTED } from "@/data/content";
 import { Logo } from "@/components/Logo";
+import { AppLauncher } from "@/components/AppLauncher";
 import { recordBookingClick } from "@/lib/guide";
 import { motionOr, SPRING_MORPH as FOLDER_LAYOUT_TRANSITION } from "@/lib/motion";
 
 const projectSlugs = ["agents", "steadyward", "lv-matching", "addreach", "recruitment-crm"];
-const serviceIcons = [Workflow, Layers, Server];
 
 export function FilesArtwork({ document = false, slug }: { document?: boolean; slug?: string }) {
   const reducedMotion = useReducedMotion();
@@ -61,17 +61,17 @@ export function FilesOverview() {
       <p>Workflow, integration, and infrastructure, AI where it earns its place. End-to-end accountability.</p>
       <a href="https://calendly.com/lvoss-anviq/30min?month=2026-09" target="_blank" rel="noopener noreferrer" onClick={() => recordBookingClick()}>Start a conversation <ArrowRight size={17} aria-hidden="true" /></a>
     </section>
+    <AppLauncher headingId="files-apps-title" />
     <section className="files-overview-work" aria-labelledby="files-work-title"><div className="files-section-heading"><h2 id="files-work-title">Selected work</h2><Link to="/explore/projects">See all<ChevronRight size={16} aria-hidden="true" /></Link></div>
-      <div className="files-grid">{WORK_SELECTED.map((project, index) => <Link className="files-item" key={project.name} to={`/projects/${projectSlugs[index]}`}><FilesArtwork slug={projectSlugs[index]} /><span className="files-item-name">{project.name}</span><span className="files-item-kind">Project</span></Link>)}</div>
+      <div className="files-grid files-grid-two">{[0, 2].map(index => <Link className="files-item" key={WORK_SELECTED[index].name} to={`/projects/${projectSlugs[index]}`}><FilesArtwork slug={projectSlugs[index]} /><span className="files-item-name">{WORK_SELECTED[index].name}</span><span className="files-item-kind">Project</span></Link>)}</div>
     </section>
-    <section className="files-services" aria-labelledby="files-services-title"><h2 id="files-services-title">Services</h2><div className="files-grouped-list">{WORK.map((item, index) => { const Icon = serviceIcons[index]; return <Link key={item.title} to={`/explore/services#service-${index}`}><Icon size={22} strokeWidth={1.75} aria-hidden="true" /><span>{item.title}</span><ChevronRight size={17} aria-hidden="true" /></Link> })}</div></section>
   </div>;
 }
 
 export function FilesBrowse() {
   const groups = [
     { title: "Locations", items: [{ label: "Anviq", note: "IT consulting and software", href: "/", Icon: Folder }] },
-    { title: "Favorites", items: [{ label: "Selected work", note: `${WORK_SELECTED.length} projects`, href: "/explore/projects", Icon: Folder }, { label: "Services", href: "/explore/services", Icon: Layers }, { label: "Approach", href: "/explore/approach", Icon: Compass }] },
+    { title: "Favorites", items: [{ label: "Selected work", note: `${WORK_SELECTED.length} projects`, href: "/explore/projects", Icon: Folder }, { label: "What we do", href: "/explore/services", Icon: Layers }, { label: "Approach", href: "/explore/approach", Icon: Compass }] },
     { title: "Information", items: [{ label: "Engagement", href: "/explore/engagement", Icon: FileText }, { label: "Constraints", href: "/explore/constraints", Icon: ShieldCheck }, { label: "Questions", href: "/explore/questions", Icon: CircleHelp }, { label: "Activity", href: "/explore/activity", Icon: Activity }, { label: "About Anviq", href: "/explore/about", Icon: BookOpen }] },
   ];
   return <div className="files-browse files-screen"><div className="files-page-heading"><h1>Browse</h1></div>{groups.map(({ title, items }) => <section className="files-browse-group" key={title}><h2>{title}</h2><nav className="files-grouped-list" aria-label={title}>{items.map(({ label, href, Icon, ...rest }) => <Link to={href} key={href}><Icon size={23} strokeWidth={1.75} aria-hidden="true" /><span>{label}{"note" in rest && <small>{rest.note}</small>}</span><ChevronRight size={17} aria-hidden="true" /></Link>)}</nav></section>)}</div>;

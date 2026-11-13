@@ -42,6 +42,7 @@ import { Logo } from "@/components/Logo";
 import {
   WORK,
   WORK_SELECTED,
+  APPS,
   PROCESS,
   ENGAGEMENT,
   CONSTRAINTS,
@@ -60,6 +61,7 @@ import { Terms } from "@/pages/Terms";
 import { Accessibility } from "@/pages/Accessibility";
 import { FilesBrowse, FilesOverview, FilesProjects, FilesTabBar, FilesToolbar, type FilesSort, type FilesView } from "@/components/FilesNavigation";
 import { SiteNavigator } from "@/components/SiteNavigator";
+import { AppLauncher, AppLink } from "@/components/AppLauncher";
 import { recordBookingClick, recordEmailCopy, recordSearchZeroResults } from "@/lib/guide";
 import { ZERO_RESULTS_HINT } from "@/lib/tone";
 import { queryWordsMatch } from "@/lib/suggest";
@@ -70,7 +72,7 @@ const NAV = [
   { id: "overview", label: "Overview", icon: House, href: "/" },
   {
     id: "services",
-    label: "Services",
+    label: "What we do",
     icon: Layers,
     href: "/explore/services",
   },
@@ -112,6 +114,7 @@ const NAV = [
   },
 ];
 const SLUGS = ["agents", "steadyward", "lv-matching", "addreach", "recruitment-crm"];
+const OVERVIEW_WORK = [0, 2];
 const SITE_ORIGIN = "https://anviq.net";
 const SECTION_META: Record<string, { title: string; description: string }> = {
   overview: {
@@ -119,7 +122,7 @@ const SECTION_META: Record<string, { title: string; description: string }> = {
     description: "An IT consulting and software company for custom systems, automation, integration, and infrastructure.",
   },
   services: {
-    title: "Services | Anviq",
+    title: "What we do | Anviq",
     description: "Custom software, automation, integration, and infrastructure for workflows that need to work in the real world.",
   },
   projects: {
@@ -227,7 +230,6 @@ function searchEntries(query: string) {
     queryWordsMatch(query, [item.title, item.sub, item.href, item.body]),
   );
 }
-const SERVICE_ICONS = [Workflow, Layers, Server];
 const PROJECT_DETAILS = [
   [
     ["Focus", "Persistent AI teammates with memory, routines, and tools"],
@@ -398,6 +400,7 @@ function Overview() {
         </p>
         <ContactLink />
       </section>
+      <AppLauncher headingId="apps-title" />
       <section className="overview-projects" aria-labelledby="projects-title">
         <div className="section-heading">
           <h2 id="projects-title">Selected work</h2>
@@ -405,35 +408,20 @@ function Overview() {
             Browse all <ChevronRight size={16} aria-hidden="true" />
           </Link>
         </div>
-        <div className="folder-grid">
-          {WORK_SELECTED.map((project, index) => (
-            <Link
-              className="project-folder"
-              key={project.name}
-              to={`/projects/${SLUGS[index]}`}
-            >
-              <span className="folder-image-lift">
-                <FolderImage slug={SLUGS[index]} />
-              </span>
-              <h3>{project.name}</h3>
-              <p>{project.tag}</p>
-            </Link>
-          ))}
-        </div>
-      </section>
-      <section className="overview-services" aria-labelledby="services-title">
-        <h2 id="services-title">How Anviq can help</h2>
-        <div className="service-links">
-          {WORK.map((service, index) => {
-            const Icon = SERVICE_ICONS[index];
+        <div className="folder-grid folder-grid-two">
+          {OVERVIEW_WORK.map((index) => {
+            const project = WORK_SELECTED[index];
             return (
               <Link
-                key={service.title}
-                to={`/explore/services#service-${index}`}
+                className="project-folder"
+                key={project.name}
+                to={`/projects/${SLUGS[index]}`}
               >
-                <Icon size={23} strokeWidth={1.75} aria-hidden="true" />
-                <span>{service.title}</span>
-                <ChevronRight size={18} aria-hidden="true" />
+                <span className="folder-image-lift">
+                  <FolderImage slug={SLUGS[index]} />
+                </span>
+                <h3>{project.name}</h3>
+                <p>{project.tag}</p>
               </Link>
             );
           })}
@@ -623,26 +611,29 @@ function ProjectBrowser({ slug, filesLayout, view, setView, sort, setSort }: { s
 function Services() {
   return (
     <DocumentPage
-      title="Three things, one point of contact."
+      title="What we do, in three parts."
       intro="Custom software, integration with what you already run, and infrastructure with agreed access controls. AI where it earns its place, not by default."
     >
       <div className="document-sections">
-        {WORK.map((item, index) => {
-          const Icon = SERVICE_ICONS[index];
-          return (
-            <section
-              id={`service-${index}`}
-              key={item.title}
-              className="service-detail"
-            >
-              <Icon aria-hidden="true" size={26} strokeWidth={1.75} />
-              <div>
-                <h2>{item.title}</h2>
-                <p>{item.body}</p>
-              </div>
-            </section>
-          );
-        })}
+        {APPS.map((app, index) => (
+          <section id={`service-${index}`} key={app.id} className="service-detail app-detail">
+            <img src={app.icon} alt="" width="64" height="64" />
+            <div>
+              <h2>{app.name}</h2>
+              <p>{app.body}</p>
+              {app.id === "build" && (
+                <ul className="app-services">
+                  {WORK.map((item) => (
+                    <li key={item.title}><strong>{item.title}.</strong> {item.body}</li>
+                  ))}
+                </ul>
+              )}
+              <AppLink app={app} className="internal-link">
+                Open {app.name} <ArrowRight size={18} aria-hidden="true" />
+              </AppLink>
+            </div>
+          </section>
+        ))}
       </div>
       <p>
         Anviq embeds with your team and owns delivery from the first
