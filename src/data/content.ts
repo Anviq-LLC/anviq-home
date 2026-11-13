@@ -366,3 +366,36 @@ export const FAQ = [
     a: "Email a short description of the workflow you want automated or connected. Leonardo replies with scope and timing for the assessment.",
   },
 ];
+
+export const APPS = [
+  {
+    id: "agents",
+    name: "Anviq Agents",
+    tag: "AI helpers for your team",
+    body: "Persistent AI teammates with memory, routines and tools. Risky code runs in its own isolated machine on hardware the business controls.",
+    icon: "/images/app-agents.svg",
+    href: "https://agents.anviq.net/?open=1",
+    c1: "#2b3bb8",
+    c2: "#6f8bff",
+  },
+  {
+    id: "build",
+    name: "Anviq Build",
+    tag: "Custom software",
+    body: "Software and automation, integration with the systems you already run, and infrastructure with agreed access controls.",
+    icon: "/images/app-build.svg",
+    href: "https://build.anviq.net/?open=1",
+    c1: "#1b212b",
+    c2: "#4a5565",
+  },
+  {
+    id: "public",
+    name: "Anviq Public",
+    tag: "Websites for government",
+    body: "Accessible websites, records portals and migrations, with the audit documents a procurement asks for.",
+    icon: "/images/app-public.svg",
+    href: "https://public.anviq.net/?open=1",
+    c1: "#0f5a73",
+    c2: "#2fa89a",
+  },
+];

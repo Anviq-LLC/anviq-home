@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" width="120" height="120">
+<defs>
+<linearGradient id="g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#4a5565"/><stop offset="1" stop-color="#1b212b"/></linearGradient>
+<linearGradient id="s" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".22"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient>
+<linearGradient id="a" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffcf70"/><stop offset="1" stop-color="#f09a2c"/></linearGradient>
+</defs>
+<rect x="4" y="4" width="112" height="112" rx="27" fill="url(#g)"/>
+<rect x="4" y="4" width="112" height="56" rx="27" fill="url(#s)"/>
+<rect x="4.75" y="4.75" width="110.5" height="110.5" rx="26.5" fill="none" stroke="#fff" stroke-opacity=".22" stroke-width="1.5"/>
+<path d="M19 47 H96 Q100 47 100 51 V56 Q100 60 96 60 H78 Q74 60 74 64 V70 Q74 74 78 74 H84 V86 H36 V74 H42 Q46 74 46 70 V64 Q46 60 42 60 H38 Q26 58 19 47 Z" fill="url(#a)"/>
+<path d="M19 47 H96 Q100 47 100 51 V52 H33 Q25 51 19 47 Z" fill="#fff" fill-opacity=".35"/>
+<path d="M92 36 l5 -9 M99 39 l9 -4 M86 33 l1 -10" stroke="#ffe3a3" stroke-width="3.5" stroke-linecap="round"/>
+</svg>
