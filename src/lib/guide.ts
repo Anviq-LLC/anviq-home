@@ -1,4 +1,4 @@
-// Deterministic hint engine shared by Terminal and MobileChat. Text comes
+// Deterministic hint engine used by Sherlock. Text comes
 // only from siteTree.ts node data or the fixed lines in tone.ts.
 //
 // A hint is marked as seen on close() or dismiss(), not during render.
@@ -11,7 +11,6 @@ import { useEffect, useState, useSyncExternalStore } from "react";
 import { useLocation } from "react-router-dom";
 import { findNode, flattenRoutes, type SiteNode } from "@/lib/siteTree";
 import {
-  badgeGreetingForDays,
   BOOKING_HINT,
   CALENDLY_RETURN_HINT,
   DEDUCTION_ALL_SECTIONS,
@@ -46,8 +45,7 @@ const MULTI_DAY_MS = 24 * 60 * 60 * 1000;
 const CALENDLY_RETURN_WINDOW_MS = 5 * 60 * 1000;
 const JOKE_CAP_PER_VISIT = 2;
 
-export const EXAMPLE_HINT = "Not sure what that means. Try: steadyward";
-export const IDLE_HINT = "Still here? Try a topic, or ls.";
+export const IDLE_HINT = "Still here? Ask me anything, or let me show you around.";
 
 const CASE_ORDER = [
   "/projects/steadyward",
@@ -153,14 +151,6 @@ export function takeJokeSlot(): boolean {
   return true;
 }
 
-/** Once-per-visitor persona line, counting against the joke cap. */
-export function tryPersona(id: string): boolean {
-  if (hasOnce(id)) return false;
-  if (!takeJokeSlot()) return false;
-  markOnce(id);
-  return true;
-}
-
 export function markMetSherlock() {
   markOnce(MET_KEY);
 }
@@ -174,12 +164,6 @@ export function noteBadgeShown() {
   saveNumber(BADGE_SHOWN_KEY, Date.now());
 }
 
-export function getBadgeGreeting(): string {
-  const shownAt = loadNumber(BADGE_SHOWN_KEY);
-  if (!shownAt) return badgeGreetingForDays(4);
-  const days = Math.floor((Date.now() - shownAt) / MULTI_DAY_MS);
-  return badgeGreetingForDays(days);
-}
 
 export function isEvergreenHint(hint: string | null): boolean {
   return !!hint && hint.startsWith("Not yet seen:");
@@ -305,7 +289,7 @@ export interface GuideApi {
    *  backdrop click, trigger toggle) - commits whatever hint was showing,
    *  same as dismiss, so a read-then-closed hint doesn't reappear either. */
   close: () => void;
-  /** `type: "unmatched"` - call once per unresolved terminal command / chat query. */
+  /** `type: "unmatched"` - call once per unresolved Sherlock question. */
   recordAction: (type: "unmatched") => void;
 }
 

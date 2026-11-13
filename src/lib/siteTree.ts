@@ -336,7 +336,7 @@ function walkPath(cwd: string, input: string): string | undefined {
 }
 
 /**
- * Terminal-style path resolution: absolute (`/projects`), relative
+ * Path resolution: absolute (`/projects`), relative
  * (`steadyward`, `../services`), `.`/`..`, a display name (`Selected work`),
  * or an alias, resolved against `cwd`. If the walk from `cwd` misses, a
  * unique global match on name/alias/segment still resolves - `open` from

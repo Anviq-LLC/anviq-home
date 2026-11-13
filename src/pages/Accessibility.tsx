@@ -36,7 +36,7 @@ export function Accessibility() {
 
       <h2>4. Known limits</h2>
       <ul>
-        <li>The terminal and chat features are extras. If one is hard to use with your assistive technology, email us and we will help another way.</li>
+        <li>Sherlock, the guide character, is an extra. Its second cursor and its follow-my-cursor movement can be stopped with any click or key press, and following can be turned off in its panel. Every page works without it. If it is hard to use with your assistive technology, email us and we will help another way.</li>
         <li>Screenshots show other products and may contain small text. The text next to each screenshot describes what it shows.</li>
       </ul>
 

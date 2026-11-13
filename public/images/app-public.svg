@@ -11,9 +11,9 @@
 <g filter="url(#ps)">
 <path d="M60 26.5 L90 44 H30 Z" fill="url(#pg)" stroke="url(#pg)" stroke-width="3" stroke-linejoin="round"/>
 <rect x="30" y="46.5" width="60" height="5" rx="2" fill="url(#pg)"/>
-<rect x="33" y="54" width="8" height="23" rx="2.4" fill="url(#pc)"/><rect x="47.7" y="54" width="8" height="23" rx="2.4" fill="url(#pc)"/><rect x="62.3" y="54" width="8" height="23" rx="2.4" fill="url(#pc)"/><rect x="77" y="54" width="8" height="23" rx="2.4" fill="url(#pc)"/>
+<rect x="33" y="54" width="8" height="23" rx="2.4" fill="url(#pg)"/><rect x="47.7" y="54" width="8" height="23" rx="2.4" fill="url(#pg)"/><rect x="62.3" y="54" width="8" height="23" rx="2.4" fill="url(#pg)"/><rect x="77" y="54" width="8" height="23" rx="2.4" fill="url(#pg)"/>
 <rect x="29" y="79.5" width="62" height="5" rx="2" fill="url(#pg)"/>
 <rect x="25" y="86" width="70" height="5.5" rx="2.4" fill="url(#pg)"/>
 </g>
-<path d="M60 31.5 L77 41.5 H43 Z" fill="#fff" opacity=".22"/>
+
 </svg>
