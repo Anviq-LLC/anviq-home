@@ -1,5 +1,5 @@
 // Tiny cross-surface flag: the desktop `/` hotkey on CommandPalette must
-// not steal focus from an open terminal or chat sheet. Not a store - one
+// not steal focus from an open Sherlock panel. Not a store - one
 // boolean the two navigator surfaces write on open/close.
 
 let surfaceOpen = false;

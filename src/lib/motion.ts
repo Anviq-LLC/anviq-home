@@ -1,4 +1,4 @@
-// Transition timing for the terminal, chat sheet, lightbox, board panes and
+// Transition timing for Sherlock, the lightbox, board panes and
 // folder morphs. The command palette keeps its own PALETTE_FADE in Home.tsx.
 //
 //   FADE          opacity only (backdrops, dialogs)

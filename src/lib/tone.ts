@@ -7,7 +7,7 @@ export const GREETING_LINES = [
   "The other one retired to Sussex to keep bees. I was replaced by Spotlight in 2005. One of us drew the short straw.",
 ];
 
-// Once per visitor, when a project case is opened from the terminal or chat.
+// Once per visitor, when a project case is opened through Sherlock.
 export const NODE_OPENER_LINES: Record<string, string> = {
   "/projects/steadyward": "Retention infrastructure. So far, you are retained.",
   "/projects/lv-matching": "Minds its own tenants. Built like the lawyers were in the room.",
@@ -59,19 +59,7 @@ export const ZERO_RESULTS_HINT = 'Nothing. Try "projects." Or ask a human.';
 export const CALENDLY_RETURN_HINT = "Window-shopped the calendar. It holds.";
 export const PRINT_HINT = "Filing this for the archive. Noted.";
 
-// Terminal command commentary, once per visitor each, max two per visit.
-// Rendered only as the response to the command that triggered it.
-export const COMMAND_COMMENTARY = {
-  sudo: "There is no sudo here. The oaths are load-bearing.",
-  alias: "dir works. Sherlock doesn't judge. He notes.",
-  clear: "The scrollback forgets. Sherlock remembers. Briefly.",
-  pwd: "You are here. It has rarely been truer.",
-  exit: "There is no exit. There is only Esc.",
-  helpTwice: "Help, twice. Thorough or lost. Both welcome.",
-  whitespace: "Whitespace received. Acknowledged. Ignored.",
-} as const;
-
-// Shared by chat and terminal so both answer a bare "hi" the same way.
+// A bare "hi" gets the same answer everywhere.
 export const GREETING_WORDS = ["hi", "hello", "hey", "hiya", "yo", "sup", "howdy", "greetings"] as const;
 export const GREETING_REPLY = "Hello. Now, to business: projects, services, or about?";
 

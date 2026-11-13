@@ -1,5 +1,4 @@
-// Keyword matching for the mobile chat, the phone equivalent of the
-// terminal's `open`. Keywords are derived from siteTree.ts (path segments,
+// Keyword matching for Sherlock's typed requests. Keywords are derived from siteTree.ts (path segments,
 // aliases, name words), so there's no separate list to maintain.
 
 import { flattenRoutes, type SiteNode } from "@/lib/siteTree";
@@ -49,8 +48,8 @@ export function matchIntent(query: string): SiteNode | undefined {
 
 /**
  * Prefer an explicitly named page ("Anviq Agents", "selected work") over a
- * generic word within it ("Anviq", "work"). The terminal and mobile surface
- * use this for an action request, keeping their navigation behaviour aligned.
+ * generic word within it ("Anviq", "work"). Sherlock uses
+ * this for an action request.
  */
 export function matchNavigationIntent(query: string): SiteNode | undefined {
   const compact = query.toLowerCase().replace(/[^a-z0-9]+/g, "");

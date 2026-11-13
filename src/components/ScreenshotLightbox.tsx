@@ -126,7 +126,7 @@ function OverlayQuickLook({ src, alt, label, layoutId }: PreviewProps) {
     if (mode === "pinned") dialogRef.current?.focus();
   }, [mode]);
 
-  // HIG 3.2: the navigator (terminal/chat) and this lightbox never stack -
+  // HIG 3.2: the navigator (Sherlock) and this lightbox never stack -
   // whichever opens second closes the other instead of layering two
   // full-screen overlays.
   useEffect(() => {
