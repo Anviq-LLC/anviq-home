@@ -291,3 +291,4 @@
 @media (prefers-reduced-transparency: reduce), (prefers-contrast: more) { .files-toolbar, .files-tab-bar { background: var(--chrome); backdrop-filter: none; -webkit-backdrop-filter: none; } }
 @media (forced-colors: active) { .files-view-switch button[aria-pressed="true"], .files-tab-bar a[aria-current="page"] { outline: 2px solid Highlight; outline-offset: -3px; } .files-folder-art { forced-color-adjust: none; } }
 .files-overview .files-grid.files-grid-two { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+@media (prefers-color-scheme: dark) { .files-page-heading svg path:first-child { fill: #f0f3f9; } }
