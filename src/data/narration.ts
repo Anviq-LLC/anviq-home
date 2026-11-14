@@ -10,7 +10,7 @@ export interface Say {
 
 export const NARRATION: Record<string, Say[]> = {
   "/": [
-    { find: "Systems built to hold", say: "Hi, I'm Sherlock. This is Anviq: IT consulting and software. Leonardo Voss leads the work, and the idea is simple. Take a fragile process and turn it into software your business can actually run and own." },
+    { find: "Systems built to hold", say: "Hi, I'm Sherlock. This is Anviq: IT consulting and software. The Anviq team leads the work, and the idea is simple. Take a fragile process and turn it into software your business can actually run and own." },
     { find: "What we do", say: "Here is the quickest way to see what Anviq does. Three apps, and you pick the one that fits." },
     { selector: ".apps-grid > a:nth-child(1)", say: "Anviq Agents are AI helpers for your team, with memory, routines and tools." },
     { selector: ".apps-grid > a:nth-child(2)", say: "Anviq Build is custom software, for a workflow you already have." },
@@ -41,10 +41,10 @@ export const NARRATION: Record<string, Say[]> = {
     { find: "Ownership", say: "On ownership, the code, configuration and documentation are handed over as part of delivery, as agreed in the scope." },
   ],
   "/explore/questions": [
-    { find: "Common questions", say: "These are the things people ask first. For example, who does the work? Leonardo Voss leads it, and he is the person you deal with." },
+    { find: "Common questions", say: "These are the things people ask first. For example, who does the work? The Anviq team leads it and is who you deal with." },
   ],
   "/explore/about": [
-    { find: "About Anviq", say: "Anviq is an IT consulting and software company. Leonardo Voss leads the work from the first conversation to handover." },
+    { find: "About Anviq", say: "Anviq is an IT consulting and software company. The Anviq team leads the work from the first conversation to handover." },
     { find: "Founder", say: "Leonardo is an engineer with four years in regulated commercial operations, across brokerage, fintech and iGaming." },
     { find: "Three ways of shipping", say: "Anviq ships in three ways: service as software, forward-deployed engineering, and infrastructure." },
   ],

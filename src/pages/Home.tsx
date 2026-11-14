@@ -194,7 +194,7 @@ const SECTION_META: Record<string, { title: string; description: string }> = {
   },
   about: {
     title: "About Anviq",
-    description: "An IT consulting and software company. Leonardo Voss leads the work, from first conversation to handover.",
+    description: "An IT consulting and software company. The Anviq team leads the work, from first conversation to handover.",
   },
 };
 // One credibility line, not an autobiography - LinkedIn holds the story.
@@ -245,7 +245,7 @@ const SEARCH_ENTRIES = [
     group: "Explore" as const,
     icon: BookOpen,
     sub: "The company",
-    body: "IT consulting and software company. Leonardo Voss leads the work. Commercial judgment and technical delivery, full accountability.",
+    body: "IT consulting and software company. The Anviq team leads the work. Commercial judgment and technical delivery, full accountability.",
   },
 ];
 function searchEntries(query: string) {
@@ -344,7 +344,7 @@ function FolderImage({ small = false, slug }: { small?: boolean; slug?: string }
 function ContactLink({
   children = "Start a conversation",
   compact = false,
-  href = "https://calendly.com/lvoss-anviq/30min?month=2026-09",
+  href = "https://calendly.com/lvoss-anviq/30min",
 }: {
   children?: ReactNode;
   compact?: boolean;
@@ -1018,7 +1018,7 @@ function About() {
   return (
     <DocumentPage
       title="About Anviq"
-      intro="An IT consulting and software company. Leonardo Voss leads the work, from the first conversation to handover."
+      intro="An IT consulting and software company. The Anviq team leads the work, from the first conversation to handover."
     >
       <h2>Founder</h2>
       <div className="identity-strip">

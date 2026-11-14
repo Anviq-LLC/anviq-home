@@ -19,13 +19,13 @@ export const NODE_OPENER_LINES: Record<string, string> = {
 // Once per visitor, on the first visit to a section. Fired from the router
 // subscription in guide.ts, so it also covers normal browsing.
 export const SECTION_COMMENTARY: Record<string, string> = {
-  "/services": "Three ways to work with Anviq. Leonardo stays the point of contact.",
+  "/services": "Three ways to work with Anviq. The team stays the point of contact.",
   "/engagement": "Terms of engagement, actually readable. Rare artifact.",
   "/approach": "How the work runs. No process theater.",
   "/constraints": "The page where clients get told no. They read it twice.",
   "/questions": "Answers pre-loaded. Suspiciously efficient.",
   "/activity": "Live commits. GitHub doesn't do marketing copy.",
-  "/about": "Anviq on the door. Leonardo on the work.",
+  "/about": "Anviq on the door. The team on the work.",
   "/privacy": "No cookies here. The footer reaction stays in the footer.",
   "/cookies": "No cookies here. The footer reaction stays in the footer.",
   "/terms": "No cookies here. The footer reaction stays in the footer.",
@@ -37,7 +37,7 @@ export const BOOKING_HINT =
 
 // Once per visitor, 3+ sections visited and no booking click yet.
 export const SOCIAL_HINT =
-  "If async is more your speed, LinkedIn and X are real, and Leonardo answers.";
+  "If async is more your speed, LinkedIn and X are real, and the team answers.";
 
 // Deductions. Only coarse facts (never timings, hovers or scroll depth).
 export const DEDUCTION_SECOND_CASE =

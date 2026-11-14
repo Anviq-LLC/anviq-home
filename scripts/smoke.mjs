@@ -90,7 +90,11 @@ for (const [route, needle] of [["/explore/privacy", "Cloudflare Workers AI"], ["
   }
   await sleep(300);
   check("fit check recommends Anviq Public", (await page.$eval(".sherlock-result-name", (e) => e.textContent).catch(() => "")).includes("Anviq Public"));
-  const others = (await browser.pages()).filter((tab) => tab !== page);
+  let others = [];
+  for (let i = 0; i < 20 && !others.some((tab) => tab.url().includes("public.anviq.net")); i += 1) {
+    await sleep(250);
+    others = (await browser.pages()).filter((tab) => tab !== page);
+  }
   check("the last answer opens the matching site in a new tab", others.some((tab) => tab.url().includes("public.anviq.net")));
   for (const tab of others) await tab.close();
   await page.bringToFront();

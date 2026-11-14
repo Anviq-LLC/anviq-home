@@ -113,7 +113,7 @@ const PAGE_GUIDANCE: Record<string, { plain: string; next: GuideStep[] }> = {
     ],
   },
   "/about": {
-    plain: "About explains Anviq and the person accountable for the work. Leonardo Voss leads it, with the commercial context kept next to the technical delivery.",
+    plain: "About explains Anviq and the person accountable for the work. The Anviq team leads it, with the commercial context kept next to the technical delivery.",
     next: [
       { path: "/projects", reason: "see that accountability in the work" },
       { path: "/activity", reason: "inspect the public evidence trail" },

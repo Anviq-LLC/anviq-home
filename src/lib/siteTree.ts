@@ -205,7 +205,7 @@ export const SITE_TREE: SiteNode = {
           name: "Book a call",
           kind: "link",
           // Default ContactLink href, src/pages/Home.tsx `function ContactLink`.
-          href: "https://calendly.com/lvoss-anviq/30min?month=2026-09",
+          href: "https://calendly.com/lvoss-anviq/30min",
           summary: "Start a conversation.",
           aliases: ["calendly", "book", "booking"],
         },

@@ -40,7 +40,7 @@ export function FilesToolbar({ title, phone, sidebarOpen, onToggleSidebar, back,
     <div className="files-toolbar-row">
       {phone ? <Link to={back.href} className="files-back"><ChevronLeft size={24} aria-hidden="true" /><span>{back.label}</span></Link> : <div className="files-toolbar-leading"><button className="icon-button" aria-label={sidebarOpen ? "Hide sidebar" : "Show sidebar"} aria-expanded={sidebarOpen} aria-controls="desktop-sidebar" onClick={onToggleSidebar}><PanelLeft size={23} aria-hidden="true" /></button>{back.href !== "/explore/browse" && <Link to={back.href} className="files-back"><ChevronLeft size={22} aria-hidden="true" /><span>{back.label}</span></Link>}</div>}
       <span className="files-toolbar-title">{title}</span>
-      <a href="https://calendly.com/lvoss-anviq/30min?month=2026-09" target="_blank" rel="noopener noreferrer" onClick={() => recordBookingClick()} className="files-contact" aria-label="Contact Anviq"><Mail size={22} strokeWidth={1.75} aria-hidden="true" /><span>Contact</span></a>
+      <a href="https://calendly.com/lvoss-anviq/30min" target="_blank" rel="noopener noreferrer" onClick={() => recordBookingClick()} className="files-contact" aria-label="Contact Anviq"><Mail size={22} strokeWidth={1.75} aria-hidden="true" /><span>Contact</span></a>
     </div>
     <div className="files-search-row">{children}</div>
   </header>;
@@ -59,7 +59,7 @@ export function FilesOverview() {
     <section className="files-welcome-document" aria-labelledby="files-welcome-title">
       <h2 id="files-welcome-title">Systems built to hold.</h2>
       <p>Workflow, integration, and infrastructure, AI where it earns its place. End-to-end accountability.</p>
-      <a href="https://calendly.com/lvoss-anviq/30min?month=2026-09" target="_blank" rel="noopener noreferrer" onClick={() => recordBookingClick()}>Start a conversation <ArrowRight size={17} aria-hidden="true" /></a>
+      <a href="https://calendly.com/lvoss-anviq/30min" target="_blank" rel="noopener noreferrer" onClick={() => recordBookingClick()}>Start a conversation <ArrowRight size={17} aria-hidden="true" /></a>
     </section>
     <AppLauncher headingId="files-apps-title" />
     <section className="files-overview-work" aria-labelledby="files-work-title"><div className="files-section-heading"><h2 id="files-work-title">Selected work</h2><Link to="/explore/projects">See all<ChevronRight size={16} aria-hidden="true" /></Link></div>

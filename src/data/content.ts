@@ -351,7 +351,7 @@ export const ENGAGEMENT = [
 export const FAQ = [
   {
     q: "Who actually does the work?",
-    a: "Leonardo Voss leads the work, and he is the person you deal with. Anviq stays accountable from the assessment through deployment and handover.",
+    a: "The Anviq team leads the work and is who you deal with. Anviq stays accountable from the assessment through deployment and handover.",
   },
   {
     q: "Where is data hosted?",
@@ -363,7 +363,7 @@ export const FAQ = [
   },
   {
     q: "How does a technical assessment start?",
-    a: "Email a short description of the workflow you want automated or connected. Leonardo replies with scope and timing for the assessment.",
+    a: "Email a short description of the workflow you want automated or connected. The Anviq team replies with scope and timing for the assessment.",
   },
 ];
 
