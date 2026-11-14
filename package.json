@@ -10,7 +10,11 @@
     "preview": "vite preview",
     "audit:site-tree": "node scripts/audit-site-tree.mjs",
     "verify:navigation": "node scripts/verify-navigation.mjs",
-    "verify:sherlock": "node scripts/verify-sherlock.mjs"
+    "verify:sherlock": "node scripts/verify-sherlock.mjs",
+    "verify:quick-answers": "node scripts/verify-quick-answers.mjs",
+    "verify:compliance": "node scripts/verify-compliance.mjs",
+    "test": "npm run audit:site-tree && npm run verify:navigation && npm run verify:sherlock && npm run verify:quick-answers && npm run verify:compliance",
+    "smoke": "node scripts/smoke.mjs"
   },
   "dependencies": {
     "@radix-ui/react-slot": "^1.3.3",
@@ -32,7 +36,9 @@
     "@types/react": "^19.2.18",
     "@types/react-dom": "^19.2.4",
     "@vitejs/plugin-react": "^6.1.0",
+    "axe-core": "^4.14.0",
     "oxlint": "^1.79.0",
+    "puppeteer-core": "^25.17.0",
     "typescript": "~6.0.2",
     "vite": "^8.2.2"
   }

@@ -10,7 +10,7 @@ import { cn } from "@/lib/utils";
 
 // only the default set, the full emoji map ships 380kb of json
 const DEFAULT_EMOJI_DATA: EmojiData = {
-  baseUrl: "https://em-content.zobj.net/source/apple/419/",
+  baseUrl: "/emoji/",
   emojis: {
     "smiling-face-with-hearts": "smiling-face-with-hearts_1f970.png",
     "star-struck": "star-struck_1f929.png",

@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, useSyncExternalStore } from "react";
+import { lazy, Suspense, useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { createPortal } from "react-dom";
 import type { CSSProperties, FormEvent, ReactNode } from "react";
 import {
@@ -48,17 +48,40 @@ import {
   CONSTRAINTS,
   FAQ,
 } from "@/data/content";
-import { PublicActivity } from "@/components/PublicActivity";
 import { ExplorerPane } from "@/components/ExplorerPane";
-import { ScreenshotLightbox } from "@/components/ScreenshotLightbox";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
-import { GitHubActivity } from "@/components/ui/github-activity";
 import { EmojiReaction } from "@/components/ui/emoji-reaction";
 import { DocumentPage } from "@/components/DocumentPage";
-import { Privacy } from "@/pages/Privacy";
-import { Cookies } from "@/pages/Cookies";
-import { Terms } from "@/pages/Terms";
-import { Accessibility } from "@/pages/Accessibility";
+
+// These load on demand and are fetched when the browser is idle, so opening
+// them is instant but they stay out of the first download.
+const pageLoaders = {
+  privacy: () => import("@/pages/Privacy").then((m) => ({ default: m.Privacy })),
+  cookies: () => import("@/pages/Cookies").then((m) => ({ default: m.Cookies })),
+  terms: () => import("@/pages/Terms").then((m) => ({ default: m.Terms })),
+  accessibility: () => import("@/pages/Accessibility").then((m) => ({ default: m.Accessibility })),
+  activity: () => import("@/components/ui/github-activity").then((m) => ({ default: m.GitHubActivity })),
+  publicActivity: () => import("@/components/PublicActivity").then((m) => ({ default: m.PublicActivity })),
+  lightbox: () => import("@/components/ScreenshotLightbox").then((m) => ({ default: m.ScreenshotLightbox })),
+};
+const Privacy = lazy(pageLoaders.privacy);
+const Cookies = lazy(pageLoaders.cookies);
+const Terms = lazy(pageLoaders.terms);
+const Accessibility = lazy(pageLoaders.accessibility);
+const GitHubActivity = lazy(pageLoaders.activity);
+const PublicActivity = lazy(pageLoaders.publicActivity);
+const ScreenshotLightbox = lazy(pageLoaders.lightbox);
+if (typeof window !== "undefined") {
+  window.addEventListener(
+    "load",
+    () => {
+      const run = () => Object.values(pageLoaders).forEach((load) => void load());
+      if (typeof window.requestIdleCallback === "function") window.requestIdleCallback(run, { timeout: 5000 });
+      else setTimeout(run, 2500);
+    },
+    { once: true },
+  );
+}
 import { FilesBrowse, FilesOverview, FilesProjects, FilesTabBar, FilesToolbar, type FilesSort, type FilesView } from "@/components/FilesNavigation";
 import { SiteNavigator } from "@/components/SiteNavigator";
 import { AppIcon, AppLauncher, AppLink } from "@/components/AppLauncher";
@@ -1789,7 +1812,7 @@ export function Home() {
             animKey={`${active}-${slug ?? ""}`}
             onEnter={syncScrollAndFocus}
           >
-            {content}
+            <Suspense fallback={null}>{content}</Suspense>
           </ExplorerPane>
         </main>
         <div className="explorer-status" role="region" aria-label="Page status">
