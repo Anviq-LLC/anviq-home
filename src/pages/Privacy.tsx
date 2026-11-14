@@ -3,7 +3,7 @@ import { DocumentPage } from '@/components/DocumentPage'
 export function Privacy() {
   return (
     <DocumentPage title="Privacy Policy">
-      <p className="legal-updated">Last updated: 29 October 2026</p>
+      <p className="legal-updated">Last updated: 13 November 2026</p>
       <div className="legal-copy">
       <p>
         This Privacy Policy explains how we handle personal data in connection with this website (the
@@ -11,7 +11,7 @@ export function Privacy() {
         a separate agreement and data processing terms provided directly to that client.
       </p>
       <p>
-        We have written this to be clear and honest about a simple brochure website. If you have any question,
+        We have written this to be clear and honest about a small business website. If you have any question,
         contact us at <a href="mailto:lvoss@anviq.net">lvoss@anviq.net</a>.
       </p>
 
@@ -29,7 +29,7 @@ export function Privacy() {
 
       <h2>2. What this Site does and does not collect</h2>
       <p>
-        This is a static informational website. We have kept data collection to the minimum. We do not run
+        This is an informational website. We have kept data collection to the minimum. We do not run
         advertising trackers, and we do not build profiles of visitors.
       </p>
       <h3>Information you choose to give us</h3>
@@ -46,6 +46,42 @@ export function Privacy() {
           processes limited technical data such as your IP address, browser type, referring page, and the date and
           time of your request. This is standard for any website and is used to deliver the pages and keep the Site
           secure.
+        </li>
+      </ul>
+      <h3>Sherlock, the guide on this Site</h3>
+      <p>
+        Sherlock answers questions from text that we wrote. Most of what it does happens in your browser and sends
+        nothing: the quick answers, the fit check, and the Show me spotlight. Two things are different:
+      </p>
+      <ul>
+        <li>
+          <strong>Questions you type that Sherlock cannot match.</strong> If you type a question of three or more
+          words and it matches none of our written answers, the text of your question (up to 280 characters) is sent
+          to our server. The server asks Cloudflare Workers AI, a service run by our hosting provider Cloudflare, to
+          rank which of our written answers is closest. The model only ranks our own answers. It does not write the
+          reply you see. We do not log or store your question. Cloudflare processes it as our service provider under
+          its own terms. Please do not type personal or confidential information into this box.
+        </li>
+        <li>
+          <strong>Email my answers.</strong> This opens your own email app with a message already written. Nothing is
+          sent to us until you press send in your email app.
+        </li>
+      </ul>
+      <p>
+        Sherlock also keeps a few small notes in your browser so it can offer to continue where you left off. They
+        stay on your device and are not sent to us. See our <a href="/explore/cookies">Cookie Policy</a> for the list.
+      </p>
+      <h3>Pages that contact other services</h3>
+      <ul>
+        <li>
+          <strong>Public activity page.</strong> When you open it, your browser requests our public GitHub activity
+          from GitHub (api.github.com) and from a third-party contributions service
+          (github-contributions-api.jogruber.de), and loads repository owner pictures from github.com and avatars.githubusercontent.com. Those services
+          receive your IP address and browser details, as any website you visit would.
+        </li>
+        <li>
+          <strong>Emoji reactions.</strong> The emoji images are served from this Site. A reaction is shown on your own
+          screen only. It is not sent to us or stored.
         </li>
       </ul>
       <p>
@@ -84,6 +120,14 @@ export function Privacy() {
           <strong>Hosting / CDN:</strong> serving the Site and security logging.
         </li>
         <li>
+          <strong>Cloudflare Workers AI:</strong> ranking our written answers against a question you type into
+          Sherlock, only when the question is not matched locally.
+        </li>
+        <li>
+          <strong>GitHub and a GitHub contributions service:</strong> supplying the public activity shown on the
+          Public activity page, only if you open it.
+        </li>
+        <li>
           <strong>Email</strong> (our email provider): receiving and replying to your messages.
         </li>
       </ul>
@@ -101,7 +145,8 @@ export function Privacy() {
       <p>
         We keep enquiry correspondence only as long as needed to deal with your request and for a reasonable period
         afterwards for our records and to comply with legal obligations, then we delete it. Server and security logs
-        are kept for a short period by our hosting provider according to its policies.
+        are kept for a short period by our hosting provider according to its policies. We do not keep the questions
+        you type to Sherlock. The notes Sherlock keeps in your browser stay there until you clear your site data.
       </p>
 
       <h2>7. Your rights (UK and EU)</h2>

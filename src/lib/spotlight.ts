@@ -1,6 +1,6 @@
-// Sherlock's second mouse. It flies a labelled cursor along a route of real
-// controls, optionally clicking each one. Any real input from the visitor
-// cancels it, so it never fights them for the page.
+// Sherlock's second mouse. On request it flies a labelled cursor out of the
+// character to a real control, rings it, and clicks it if asked. Any real input
+// from the visitor, or the Stop button, ends it at once.
 
 export interface Step {
   selector: string;
@@ -11,7 +11,6 @@ export interface Step {
 }
 export interface RouteOptions {
   from: { x: number; y: number };
-  onMove?: (x: number, y: number) => void;
 }
 export type RouteResult = "done" | "cancelled" | "missing";
 
@@ -37,28 +36,32 @@ function fullyInView(el: Element) {
   return r.top >= 70 && r.bottom <= window.innerHeight - 90 && r.left >= 0 && r.right <= window.innerWidth;
 }
 
-export function runRoute(steps: Step[], { from, onMove }: RouteOptions): { cancel: () => void; finished: Promise<RouteResult> } {
+export function runRoute(steps: Step[], { from }: RouteOptions): { cancel: () => void; finished: Promise<RouteResult> } {
   let cancelled = false;
+  let done = false;
   let ghost: HTMLDivElement | null = null;
   let label: HTMLSpanElement | null = null;
-  let ring: HTMLSpanElement | null = null;
+  let tag: HTMLSpanElement | null = null;
+  let stop: HTMLButtonElement | null = null;
   let pointed: HTMLElement | null = null;
+  let pos = { ...from };
   const started = performance.now();
   const reduced = reducedMotion();
-  let pos = { ...from };
   let resolve!: (r: RouteResult) => void;
   const finished = new Promise<RouteResult>((r) => (resolve = r));
 
   const clear = () => {
     pointed?.removeAttribute("data-sherlock-pointed");
     pointed = null;
-    ring?.remove();
-    ring = null;
+    tag?.remove();
+    tag = null;
   };
   const end = (result: RouteResult) => {
-    if (!ghost && result !== "cancelled") return;
+    if (done) return;
+    done = true;
     CANCEL_EVENTS.forEach((type) => window.removeEventListener(type, onUser, true));
     clear();
+    stop?.remove();
     const g = ghost;
     ghost = null;
     if (g) {
@@ -96,10 +99,9 @@ export function runRoute(steps: Step[], { from, onMove }: RouteOptions): { cance
   const place = (x: number, y: number) => {
     pos = { x, y };
     if (ghost) ghost.style.transform = `translate(${x}px, ${y}px)`;
-    onMove?.(x, y);
   };
   const fly = (to: { x: number; y: number }) =>
-    new Promise<void>((done) => {
+    new Promise<void>((resolveFly) => {
       const dx = to.x - pos.x;
       const dy = to.y - pos.y;
       const dist = Math.hypot(dx, dy);
@@ -110,18 +112,41 @@ export function runRoute(steps: Step[], { from, onMove }: RouteOptions): { cance
       const start = { ...pos };
       const t0 = performance.now();
       const frame = (now: number) => {
-        if (cancelled) return done();
+        if (cancelled) return resolveFly();
         const t = Math.min(1, (now - t0) / duration);
         const e = ease(t);
         const bump = Math.sin(Math.PI * e) * bend;
         place(start.x + dx * e + nx * bump, start.y + dy * e + ny * bump);
         if (t < 1) requestAnimationFrame(frame);
-        else done();
+        else resolveFly();
       };
       requestAnimationFrame(frame);
     });
+  // With reduced motion there is no flying cursor, only a ring and a caption.
+  const caption = (el: HTMLElement, text: string) => {
+    const r = el.getBoundingClientRect();
+    tag = document.createElement("span");
+    tag.className = "sherlock-tag";
+    tag.setAttribute("aria-hidden", "true");
+    tag.textContent = text;
+    const below = r.bottom + 56 < window.innerHeight;
+    tag.style.left = `${Math.max(12, Math.min(r.left, window.innerWidth - 240))}px`;
+    tag.style.top = below ? `${r.bottom + 12}px` : `${Math.max(8, r.top - 44)}px`;
+    document.body.appendChild(tag);
+  };
 
   (async () => {
+    stop = document.createElement("button");
+    stop.type = "button";
+    stop.className = "sherlock-stop";
+    stop.textContent = "Stop";
+    stop.setAttribute("aria-label", "Stop Sherlock's demonstration");
+    stop.addEventListener("click", (event) => {
+      event.stopPropagation();
+      cancelled = true;
+      end("cancelled");
+    });
+    document.body.appendChild(stop);
     if (!reduced) {
       ghost = document.createElement("div");
       ghost.className = "sherlock-ghost";
@@ -143,18 +168,13 @@ export function runRoute(steps: Step[], { from, onMove }: RouteOptions): { cance
       }
       if (cancelled) return;
       const rect = el.getBoundingClientRect();
-      const to = { x: rect.left + rect.width * 0.5, y: rect.top + rect.height * 0.58 };
-      if (!reduced) await fly(to);
+      if (!reduced) await fly({ x: rect.left + rect.width * 0.5, y: rect.top + rect.height * 0.58 });
       if (cancelled) return;
       clear();
       pointed = el;
       el.setAttribute("data-sherlock-pointed", "");
-      ring = document.createElement("span");
-      ring.className = "sherlock-ring";
-      ring.style.left = `${to.x}px`;
-      ring.style.top = `${to.y}px`;
-      document.body.appendChild(ring);
-      await wait(step.click ? 480 : (step.hold ?? 1400));
+      if (reduced && step.caption) caption(el, step.caption);
+      await wait(step.click ? 700 : (step.hold ?? 1500));
       if (cancelled) return;
       if (step.click) {
         el.click();

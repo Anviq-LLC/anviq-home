@@ -421,76 +421,8 @@ svg {
   height: 21px;
   color: var(--muted);
 }
-/* iOS/Dock-style count badge. Count is derived in guide.ts; this is
-   paint only. System red, white numeral, site type weight. */
-.sherlock-badge {
-  position: absolute;
-  top: -5px;
-  right: -5px;
-  min-width: 18px;
-  height: 18px;
-  padding: 0 5px;
-  border-radius: 999px;
-  background: #ff3b30;
-  color: #fff;
-  font-size: 11px;
-  font-weight: 600;
-  line-height: 18px;
-  text-align: center;
-  font-family: var(--font-sans);
-  pointer-events: none;
-}
-@supports (corner-shape: squircle) {
-  .sherlock-badge {
-    corner-shape: squircle;
-  }
-}
-@keyframes sherlock-badge-pop {
-  from {
-    transform: scale(0.4);
-  }
-  to {
-    transform: scale(1);
-  }
-}
-.sherlock-badge-pop {
-  animation: sherlock-badge-pop 240ms cubic-bezier(0.22, 1.4, 0.36, 1);
-}
-@media (prefers-reduced-motion: reduce) {
-  .sherlock-badge-pop {
-    animation: none;
-  }
-}
-.persona-text.is-typing .persona-typewriter {
-  display: inline-block;
-  width: 0;
-  overflow: hidden;
-  white-space: nowrap;
-  vertical-align: bottom;
-  border-right: 1px solid currentColor;
-  animation: persona-type calc(var(--persona-steps) / 75 * 1s) steps(var(--persona-steps), end) forwards, persona-caret 620ms steps(1, end) infinite;
-}
-@keyframes persona-type { to { width: 100%; } }
-@keyframes persona-caret { 50% { border-color: transparent; } }
-@media (prefers-reduced-motion: reduce) {
-  .persona-text.is-typing .persona-typewriter { animation: none; width: auto; border-right: 0; }
-}
-/* R-3b: faint single-accent edge signal while the bar is engaged -
-   "Sherlock is on", not a Siri-rainbow clone. Full-viewport, pointer-events
-   none, no layout shift (an inset box-shadow, not a border), z-order below
-   every interactive layer so it never fights a focus ring. */
-.chat-edge-tint {
-  position: fixed;
-  inset: 0;
-  z-index: 90;
-  pointer-events: none;
-  box-shadow: inset 0 0 0 2.5px color-mix(in srgb, var(--accent) 22%, transparent);
-}
 @media (prefers-reduced-transparency: reduce), (prefers-contrast: more) {
-  .chat-edge-tint {
-    box-shadow: inset 0 0 0 2.5px var(--accent);
   }
-}
 .search-field {
   display: flex;
   align-items: center;
@@ -1849,6 +1781,12 @@ svg {
   line-height: 1.75;
   overflow-wrap: anywhere;
 }
+.legal-copy h3 {
+  margin: 22px 0 6px;
+  font-size: 16px;
+  font-weight: 650;
+  color: var(--text);
+}
 .legal-copy h2 {
   color: var(--text);
   margin: 32px 0 12px;
@@ -2472,63 +2410,63 @@ svg {
 .app-detail { display: flex; gap: 18px; align-items: flex-start; }
 .app-services { margin: 10px 0 12px; padding-left: 18px; list-style: disc; display: grid; gap: 6px; }
 
-/* Sherlock: a small character with a speech panel and a second cursor */
+/* Sherlock: a calm helper in the corner */
 .sherlock { position: fixed; z-index: 100; right: max(18px, env(safe-area-inset-right)); bottom: max(88px, calc(env(safe-area-inset-bottom) + 76px)); display: flex; flex-direction: column; align-items: flex-end; gap: 12px; pointer-events: none; }
 .sherlock > * { pointer-events: auto; }
 @media (min-width: 1200px) and (hover: hover) and (pointer: fine) { .sherlock { right: 28px; bottom: 28px; } }
-.sherlock-home { width: 60px; height: 60px; flex: none; pointer-events: none; }
-.sherlock-pet { position: fixed; left: 0; top: 0; z-index: 101; width: 60px; height: 60px; will-change: transform; pointer-events: none; }
-.sherlock-pet > * { pointer-events: auto; }
-.sherlock-pet.is-travelling > * { pointer-events: none; }
 .sherlock-fab { position: relative; width: 60px; height: 60px; border-radius: 50%; display: grid; place-items: center; background: var(--surface); box-shadow: 0 8px 22px rgb(20 30 50 / 18%), 0 0 0 1px var(--line); }
 .sherlock-fab:focus-visible { outline: 3px solid color-mix(in srgb, var(--focus) 60%, transparent); outline-offset: 3px; }
-.sherlock-fab .sherlock-face { transition: transform 160ms cubic-bezier(0.16, 1, 0.3, 1); }
-.sherlock-fab:hover .sherlock-face { transform: scale(1.1) rotate(-4deg); }
-.sherlock-fab:active .sherlock-face { transform: scale(0.92); }
-.sherlock-fab:focus-visible { outline: 3px solid color-mix(in srgb, var(--focus) 60%, transparent); outline-offset: 3px; }
-.sherlock-face { width: 44px; height: 44px; overflow: visible; filter: drop-shadow(0 5px 6px rgb(217 119 6 / 35%)); }
+.sherlock-face { width: 44px; height: 44px; overflow: visible; filter: drop-shadow(0 5px 6px rgb(217 119 6 / 35%)); transition: transform 160ms cubic-bezier(0.16, 1, 0.3, 1); }
+.sherlock-fab:hover .sherlock-face { transform: scale(1.08); }
 .sherlock-eyes { transform-box: fill-box; transform-origin: center; transform: translate(var(--ex, 0px), var(--ey, 0px)); transition: transform 90ms ease-out; }
 .sherlock-face.is-blinking .sherlock-eyes { transform: translate(var(--ex, 0px), var(--ey, 0px)) scaleY(0.12); transition-duration: 50ms; }
-.sherlock-face.is-thinking .sherlock-eyes { animation: sh-think 1.1s ease-in-out infinite; }
-@keyframes sh-think { 0%, 100% { transform: translate(-8px, -4px); } 50% { transform: translate(8px, -4px); } }
-@keyframes sh-pop { from { opacity: 0; transform: translateX(8px) scale(0.94); } to { opacity: 1; transform: none; } }
-.sherlock-panel { width: min(360px, calc(100vw - 36px)); max-height: min(72svh, 560px); display: flex; flex-direction: column; overflow: hidden; background: var(--surface); border: 1px solid var(--line); border-radius: 22px; box-shadow: 0 24px 60px rgb(20 30 50 / 24%); transform-origin: bottom right; }
-.sherlock-head { display: flex; align-items: center; justify-content: space-between; padding: 8px 8px 0 18px; font-size: 13px; font-weight: 650; color: var(--muted); }
-.sherlock-body { overflow-y: auto; overscroll-behavior: contain; padding: 4px 18px 14px; }
+.sherlock-panel { width: min(360px, calc(100vw - 36px)); max-height: min(74svh, 580px); display: flex; flex-direction: column; overflow: hidden; background: var(--surface); border: 1px solid var(--line); border-radius: 22px; box-shadow: 0 24px 60px rgb(20 30 50 / 24%); transform-origin: bottom right; }
+.sherlock-head { display: flex; align-items: center; justify-content: space-between; min-height: 48px; padding: 4px 8px 0 18px; font-size: 13px; font-weight: 650; color: var(--muted); }
+.sherlock-back { display: inline-flex; align-items: center; gap: 6px; min-height: 44px; margin-left: -8px; padding: 0 10px; border-radius: 9999px; color: var(--accent); font-size: 14px; font-weight: 600; }
+.sherlock-body { overflow-y: auto; overscroll-behavior: contain; padding: 2px 18px 14px; }
 .sherlock-body p { margin: 0; }
-.sherlock-query { color: var(--muted); font-size: 12px; font-weight: 550; margin-bottom: 6px !important; }
 .sherlock-text { font-size: 15px; line-height: 1.55; color: var(--text); }
-.sherlock-persona { margin-top: 8px !important; color: var(--muted); font-size: 14px; line-height: 1.5; }
+.sherlock-query { color: var(--muted); font-size: 13px; font-weight: 550; margin-bottom: 6px !important; }
+.sherlock-label { margin-top: 18px !important; margin-bottom: 8px !important; color: var(--muted); font-size: 12px; font-weight: 650; letter-spacing: 0.02em; }
 .sherlock-actions, .sherlock-chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
-.sherlock-show, .sherlock-open, .sherlock-chip { min-height: 44px; padding: 0 16px; border-radius: 9999px; font-size: 13.5px; font-weight: 600; }
-.sherlock-show { background: var(--accent); color: #fff; }
-.sherlock-show:hover { filter: brightness(1.08); }
-.sherlock-open, .sherlock-chip { background: var(--surface); border: 1px solid var(--line); color: var(--text); font-weight: 550; }
-.sherlock-open:hover, .sherlock-chip:hover { border-color: var(--accent); color: var(--accent); }
-.sherlock-starters { padding-top: 12px; margin-top: 14px; border-top: 1px solid var(--line); }
-.sherlock-form { display: flex; align-items: center; gap: 8px; padding: 8px 8px 8px 18px; border-top: 1px solid var(--line); }
+.sherlock-primary, .sherlock-secondary, .sherlock-chip { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; padding: 0 16px; border-radius: 9999px; font-size: 14px; font-weight: 600; text-align: center; }
+.sherlock-primary { background: var(--accent); color: #fff; }
+.sherlock-primary:hover { filter: brightness(1.08); }
+.sherlock-secondary, .sherlock-chip { background: var(--surface); border: 1px solid var(--line); color: var(--text); font-weight: 550; }
+.sherlock-secondary:hover, .sherlock-chip:hover { border-color: var(--accent); color: var(--accent); }
+.sherlock-chips { margin-top: 0; }
+.sherlock-options { display: grid; gap: 8px; margin-top: 12px; }
+.sherlock-options button { min-height: 48px; padding: 10px 16px; border-radius: 14px; border: 1px solid var(--line); background: var(--surface); color: var(--text); font-size: 14.5px; font-weight: 550; text-align: left; }
+.sherlock-options button:hover { border-color: var(--accent); color: var(--accent); }
+.sherlock-result { display: flex; align-items: center; gap: 14px; margin-bottom: 12px; }
+.sherlock-result-icon { display: block; width: 56px; height: 56px; flex: none; }
+.sherlock-result-icon picture { display: block; width: 100%; height: 100%; }
+.sherlock-result-name { font-size: 17px; font-weight: 650; color: var(--text); }
+.sherlock-form { display: flex; align-items: center; gap: 8px; padding: 6px 8px 6px 18px; border-top: 1px solid var(--line); }
 .sherlock-form input { flex: 1; min-width: 0; min-height: 44px; border: 0; background: transparent; color: var(--text); font: inherit; font-size: 16px; outline: none; }
 .sherlock-form:focus-within { box-shadow: inset 0 0 0 2px color-mix(in srgb, var(--focus) 55%, transparent); }
 .sherlock-send { width: 40px; height: 40px; flex: none; border-radius: 50%; display: grid; place-items: center; background: var(--accent); color: #fff; }
 .sherlock-send:disabled { opacity: 0.35; }
+.sherlock-trust { margin: 0; padding: 0 18px 12px; color: var(--muted); font-size: 12px; }
+.sherlock-cue { display: flex; align-items: center; max-width: min(300px, calc(100vw - 36px)); border-radius: 18px; background: var(--surface); box-shadow: 0 10px 30px rgb(20 30 50 / 18%), 0 0 0 1px var(--line); animation: sh-fade 240ms ease-out both; }
+.sherlock-cue-go { flex: 1; min-height: 48px; padding: 10px 6px 10px 16px; text-align: left; font-size: 14px; line-height: 1.4; color: var(--text); font-weight: 550; }
+.sherlock-cue-go:hover { color: var(--accent); }
+.sherlock-cue-x { width: 44px; height: 44px; flex: none; display: grid; place-items: center; color: var(--muted); }
+@keyframes sh-fade { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+.sherlock-tag { position: fixed; z-index: 2000; max-width: 240px; padding: 7px 12px; border-radius: 9999px; background: #ffaf38; color: #141414; font: 650 13px/1.2 var(--font-sans); pointer-events: none; box-shadow: 0 6px 16px rgb(0 0 0 / 22%); }
+[data-sherlock-pointed] { outline: 3px solid #ffaf38 !important; outline-offset: 4px; border-radius: 12px; }
+@media (prefers-color-scheme: dark) { .sherlock-primary, .sherlock-send { color: #08162b; } }
+@media (prefers-reduced-motion: reduce) { .sherlock-cue, .sherlock-face, .sherlock-eyes { animation: none; transition: none; } }
+@media (max-width: 640px) {
+  .legal-table thead { display: none; }
+  .legal-table tr { display: block; margin-bottom: 12px; border: 1px solid var(--line); border-radius: 10px; }
+  .legal-table td { display: block; border: 0 !important; padding: 8px 14px !important; }
+  .legal-table td::before { content: attr(data-label); display: block; font-size: 12px; font-weight: 650; color: var(--muted); }
+}
 .sherlock-ghost { position: fixed; left: 0; top: 0; z-index: 2000; display: flex; align-items: flex-start; gap: 2px; pointer-events: none; will-change: transform; filter: drop-shadow(0 5px 8px rgb(0 0 0 / 30%)); transition: opacity 200ms ease-out; }
 .sherlock-ghost.is-leaving { opacity: 0; }
 .sherlock-ghost span { margin-top: 22px; padding: 6px 11px; border-radius: 9999px; background: #ffaf38; color: #141414; font: 650 13px/1 var(--font-sans); white-space: nowrap; }
-.sherlock-ring { position: fixed; z-index: 1999; width: 18px; height: 18px; margin: -9px 0 0 -9px; border-radius: 50%; border: 2px solid #ffaf38; pointer-events: none; animation: sh-ring 0.6s ease-out infinite; }
-@keyframes sh-ring { from { transform: scale(0.6); opacity: 1; } to { transform: scale(3); opacity: 0; } }
-[data-sherlock-pointed] { outline: 3px solid #ffaf38 !important; outline-offset: 3px; }
-@media (prefers-reduced-motion: reduce) { .sherlock-ring, .sherlock-face.is-thinking .sherlock-eyes { animation: none; } .sherlock-fab, .sherlock-eyes { transition: none; } }
-@media (prefers-color-scheme: dark) { .sherlock-show, .sherlock-send { color: #08162b; } }
-.sherlock-follow { display: flex; align-items: center; gap: 8px; padding: 8px 18px; border-top: 1px solid var(--line); color: var(--muted); font-size: 13px; cursor: pointer; }
-.sherlock-follow input { width: 18px; height: 18px; accent-color: var(--accent); }
-@media (hover: none), (pointer: coarse) { .sherlock-follow { display: none; } }
-.sherlock-nudge { position: absolute; bottom: 72px; right: -6px; width: max-content; max-width: min(270px, calc(100vw - 36px)); padding: 14px 16px; border-radius: 18px; background: var(--surface); box-shadow: 0 14px 38px rgb(20 30 50 / 22%), 0 0 0 1px var(--line); animation: sh-pop 280ms cubic-bezier(0.2, 0.9, 0.3, 1.2) both; }
-.sherlock-pet[data-side="l"] .sherlock-nudge { right: auto; left: -6px; }
-.sherlock-pet[data-edge="t"] .sherlock-nudge { bottom: auto; top: 72px; }
-.sherlock-nudge p { margin: 0 0 10px; font-size: 14px; line-height: 1.5; color: var(--text); }
-.sherlock-nudge-actions { display: flex; flex-wrap: wrap; gap: 8px; }
-.sherlock-nudge-go, .sherlock-nudge-quiet { min-height: 40px; padding: 0 14px; border-radius: 9999px; font-size: 13px; font-weight: 600; }
-.sherlock-nudge-go { background: var(--accent); color: #fff; }
-.sherlock-nudge-quiet { color: var(--muted); }
-@media (prefers-color-scheme: dark) { .sherlock-nudge-go { color: #08162b; } }
-.sherlock > .chat-edge-tint { pointer-events: none; }
+.sherlock-stop { position: fixed; z-index: 2001; left: max(18px, env(safe-area-inset-left)); bottom: max(88px, calc(env(safe-area-inset-bottom) + 76px)); min-height: 44px; min-width: 72px; padding: 0 18px; border-radius: 9999px; background: var(--surface); color: var(--text); font-size: 14px; font-weight: 650; box-shadow: 0 8px 24px rgb(20 30 50 / 22%), 0 0 0 1px var(--line); }
+.sherlock-stop:hover { color: var(--accent); }
+.sherlock-stop:focus-visible { outline: 3px solid color-mix(in srgb, var(--focus) 60%, transparent); outline-offset: 3px; }
+@media (min-width: 1200px) and (hover: hover) and (pointer: fine) { .sherlock-stop { bottom: 28px; left: 28px; } }

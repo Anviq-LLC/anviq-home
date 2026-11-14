@@ -13,12 +13,13 @@ const SECURITY_HEADERS: Record<string, string> = {
   "X-Content-Type-Options": "nosniff",
   "Referrer-Policy": "strict-origin-when-cross-origin",
   "X-Frame-Options": "DENY",
+  "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
   "Permissions-Policy": "camera=(), microphone=(), geolocation=()",
   "Content-Security-Policy": [
     "default-src 'self'",
     "script-src 'self'",
     "style-src 'self' 'unsafe-inline'",
-    "img-src 'self' https://github.com https://em-content.zobj.net data:",
+    "img-src 'self' https://github.com https://avatars.githubusercontent.com data:",
     "connect-src 'self' https://api.github.com https://github-contributions-api.jogruber.de",
     "font-src 'self'",
     "frame-ancestors 'none'",
@@ -30,7 +31,7 @@ const SECURITY_HEADERS: Record<string, string> = {
 function withSecurityHeaders(response: Response, path = ""): Response {
   const headers = new Headers(response.headers);
   if (response.ok && path.startsWith("/assets/")) headers.set("Cache-Control", "public, max-age=31536000, immutable");
-  else if (response.ok && path.startsWith("/images/")) headers.set("Cache-Control", "public, max-age=86400");
+  else if (response.ok && (path.startsWith("/images/") || path.startsWith("/emoji/"))) headers.set("Cache-Control", "public, max-age=86400");
   for (const [key, value] of Object.entries(SECURITY_HEADERS)) {
     headers.set(key, value);
   }
