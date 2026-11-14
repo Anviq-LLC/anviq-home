@@ -3,7 +3,7 @@ import { DocumentPage } from '@/components/DocumentPage'
 export function Cookies() {
   return (
     <DocumentPage title="Cookie Policy">
-      <p className="legal-updated">Last updated: 13 November 2026</p>
+      <p className="legal-updated">Last updated: 14 November 2026</p>
       <div className="legal-copy">
       <p>
         Cookies are small files a website can store on your device. This page explains what this website

@@ -4,8 +4,8 @@ import { SHERLOCK_SHAPE } from "@/lib/sherlockShape";
 
 const C = 114.2705;
 
-// The same character family as the Anviq Agents bots: a soft shape with pill
-// eyes. The eyes follow the pointer and blink now and then.
+// The same character family as the Anviq Agents bots: a soft cloud with a
+// layered edge and pill eyes, drawn like the app icons. The eyes follow the pointer and blink now and then.
 export function SherlockFace({ thinking = false }: { thinking?: boolean }) {
   const uid = useId().replace(/:/g, "");
   const svg = useRef<SVGSVGElement>(null);
@@ -49,31 +49,20 @@ export function SherlockFace({ thinking = false }: { thinking?: boolean }) {
   }, [reduced]);
 
   return (
-    <svg ref={svg} className={`sherlock-face${thinking ? " is-thinking" : ""}`} viewBox="-15 -15 259 259" aria-hidden="true" focusable="false">
+    <svg ref={svg} className={`sherlock-face${thinking ? " is-thinking" : ""}`} viewBox="-15 -15 259 274" aria-hidden="true" focusable="false">
       <defs>
         <linearGradient id={`${uid}b`} x1=".2" y1="0" x2=".8" y2="1">
-          <stop offset="0" stopColor="#FFC25C" />
-          <stop offset="1" stopColor="#D97706" />
+          <stop offset="0" stopColor="#FFB46B" />
+          <stop offset="1" stopColor="#EE5A12" />
         </linearGradient>
-        <radialGradient id={`${uid}h`} cx=".3" cy=".18" r=".7">
-          <stop offset="0" stopColor="#fff" stopOpacity=".6" />
-          <stop offset=".6" stopColor="#fff" stopOpacity="0" />
-        </radialGradient>
-        <linearGradient id={`${uid}r`} x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0" stopColor="#fff" stopOpacity=".7" />
-          <stop offset=".45" stopColor="#fff" stopOpacity="0" />
-          <stop offset="1" stopColor="#000" stopOpacity=".22" />
+        <linearGradient id={`${uid}d`} x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stopColor="#D2530E" />
+          <stop offset="1" stopColor="#A9390A" />
         </linearGradient>
-        <clipPath id={`${uid}c`}>
-          <path d={SHERLOCK_SHAPE} />
-        </clipPath>
       </defs>
+      <path d={SHERLOCK_SHAPE} fill={`url(#${uid}d)`} transform="translate(0 9)" />
       <path d={SHERLOCK_SHAPE} fill={`url(#${uid}b)`} />
-      <path d={SHERLOCK_SHAPE} fill={`url(#${uid}h)`} />
-      <g clipPath={`url(#${uid}c)`}>
-        <path d={SHERLOCK_SHAPE} fill="none" stroke={`url(#${uid}r)`} strokeWidth="14" />
-      </g>
-      <g className="sherlock-eyes" fill="#141414">
+      <g className="sherlock-eyes" fill="#fff">
         <rect x={C - 45} y={C - 34} width="22" height="58" rx="11" />
         <rect x={C + 23} y={C - 34} width="22" height="58" rx="11" />
       </g>
