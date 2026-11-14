@@ -33,7 +33,9 @@ const QUICK: { label: string; intent: string }[] = [
   { label: "Is it secure?", intent: "security" },
 ];
 const CUE_KEY = "sherlock-cue";
+const FIT_CUE = "Not sure where to start? Answer a few quick questions and I will find your fit.";
 const CUE_PAGES: Record<string, string> = {
+  "/": FIT_CUE,
   "/explore/services": "Not sure which one fits? Try the 30 second fit check.",
   "/explore/engagement": "Have a case in mind? Three taps and I will point you the right way.",
   "/explore/constraints": "Questions about how we work? Ask me.",
@@ -287,7 +289,7 @@ export function Sherlock() {
         // Storage may be blocked; the cue then repeats per page load.
       }
       setCue(text);
-    }, 16000);
+    }, location.pathname in CUE_PAGES && CUE_PAGES[location.pathname] === FIT_CUE ? 7000 : 16000);
     return () => window.clearTimeout(timer);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [location.pathname, open]);
@@ -524,7 +526,7 @@ export function Sherlock() {
       </AnimatePresence>
       {cue && !open && (
         <div className="sherlock-cue" role="region" aria-label="Sherlock suggestion">
-          <button type="button" className="sherlock-cue-go" onClick={() => engage(location.pathname === "/explore/services" || location.pathname === "/explore/engagement" ? { kind: "fit", step: 0, answers: {} } : { kind: "home" })}>
+          <button type="button" className="sherlock-cue-go" onClick={() => engage(cue === FIT_CUE || location.pathname === "/explore/services" || location.pathname === "/explore/engagement" ? { kind: "fit", step: 0, answers: {} } : { kind: "home" })}>
             {cue}
           </button>
           <button type="button" className="sherlock-cue-x" aria-label="Dismiss suggestion" onClick={() => setCue(null)}>

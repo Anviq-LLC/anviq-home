@@ -39,7 +39,8 @@ export function findTarget(selector: string): HTMLElement | null {
 
 function fullyInView(el: Element) {
   const r = el.getBoundingClientRect();
-  return r.top >= 70 && r.bottom <= window.innerHeight - 190 && r.left >= 0 && r.right <= window.innerWidth;
+  const phone = window.matchMedia("(max-width: 759px)").matches;
+  return r.top >= 70 && r.bottom <= window.innerHeight - (phone ? 300 : 190) && r.left >= 0 && r.right <= window.innerWidth;
 }
 
 /** Light text sits on a dark ground, where the marker must not blend away. */
@@ -261,7 +262,20 @@ export function runRoute(steps: Step[], { from }: RouteOptions): { cancel: () =>
       event.stopPropagation();
       skip?.();
     });
-    bubble.appendChild(next);
+    const row = document.createElement("div");
+    row.className = "sherlock-say-row";
+    row.appendChild(next);
+    const pause = document.createElement("button");
+    pause.type = "button";
+    pause.className = "sherlock-inpause";
+    pause.textContent = "Stop";
+    pause.addEventListener("click", (event) => {
+      event.stopPropagation();
+      cancelled = true;
+      end("cancelled");
+    });
+    row.appendChild(pause);
+    bubble.appendChild(row);
     document.body.appendChild(bubble);
     const r = el.getBoundingClientRect();
     const height = bubble.offsetHeight;
@@ -299,7 +313,8 @@ export function runRoute(steps: Step[], { from }: RouteOptions): { cancel: () =>
       if (!el) return end("missing");
       if (label) label.textContent = step.say ? "Sherlock" : (step.caption ?? "Sherlock");
       if (!fullyInView(el)) {
-        el.scrollIntoView({ block: "center", behavior: reduced ? "auto" : "smooth" });
+        if (window.matchMedia("(max-width: 759px)").matches) window.scrollTo({ top: window.pageYOffset + el.getBoundingClientRect().top - 110, behavior: reduced ? "auto" : "smooth" });
+        else el.scrollIntoView({ block: "center", behavior: reduced ? "auto" : "smooth" });
         await settle(el);
       }
       if (cancelled) return;
