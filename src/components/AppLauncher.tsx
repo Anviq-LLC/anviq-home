@@ -19,7 +19,8 @@ export function AppIcon({ app }: { app: App }) {
 
 // Click: the icon grows into a full-screen splash while the site starts loading,
 // and the site opens with the same splash so the two read as one movement.
-export function AppLink({ app, className, children }: { app: App; className?: string; children: ReactNode }) {
+export function AppLink({ app, className, children, hash }: { app: App; className?: string; children: ReactNode; hash?: string }) {
+  const href = hash ? `${app.href}#${hash}` : app.href;
   const reduced = useReducedMotion();
   const [box, setBox] = useState<Box | null>(null);
   const [open, setOpen] = useState(false);
@@ -49,7 +50,7 @@ export function AppLink({ app, className, children }: { app: App; className?: st
     const rect = icon.getBoundingClientRect();
     setBox({ left: rect.left, top: rect.top, size: rect.width });
     window.setTimeout(() => {
-      window.location.href = app.href;
+      window.location.href = href;
     }, NAVIGATE_MS);
   }
 
@@ -61,7 +62,7 @@ export function AppLink({ app, className, children }: { app: App; className?: st
 
   return (
     <>
-      <a className={`${className ?? ""}${box ? " is-launching" : ""}`} href={app.href} onClick={launch}>
+      <a className={`${className ?? ""}${box ? " is-launching" : ""}`} href={href} onClick={launch}>
         {children}
       </a>
       {box && <p className="sr-only" role="status">Opening {app.name}</p>}

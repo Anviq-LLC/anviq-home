@@ -123,6 +123,13 @@ function fitText(who: Who, answers: Answers) {
   return { rec, app, lines: [...summaryLines(who, answers), `Suggested fit: ${app ? app.name : "a short call first"}`] };
 }
 
+// What the visitor told Sherlock travels in the link, as plain category codes,
+// so he can pick the conversation up on the real site. No names or free text.
+function fitHash(who: Who, answers: Answers) {
+  const parts = [`who.${who}`, ...Object.entries(answers).map(([k, v]) => `${k}.${v}`)];
+  return `fit=${parts.join("_")}`;
+}
+
 function mailFor(who: Who, answers: Answers) {
   const { app, lines } = fitText(who, answers);
   const subject = app ? `${app.name}: fit check` : "A conversation about a workflow";
@@ -465,8 +472,8 @@ export function Sherlock() {
                     </ul>
                     <div className="sherlock-actions">
                       {app && (
-                        <AppLink app={app} className="sherlock-primary">
-                          Open {app.name}
+                        <AppLink app={app} className="sherlock-primary" hash={fitHash(view.who, view.answers)}>
+                          Take me to {app.name}
                         </AppLink>
                       )}
                       <a className={app ? "sherlock-secondary" : "sherlock-primary"} href={BOOKING} target="_blank" rel="noopener noreferrer" onClick={() => recordBookingClick()}>

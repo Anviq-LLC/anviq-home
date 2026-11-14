@@ -200,7 +200,27 @@ export function runRoute(steps: Step[], { from }: RouteOptions): { cancel: () =>
     if (next && /^(P)$/.test(next.tagName)) out.push(next);
     return out;
   };
+  // Cards, buttons and anything with a picture get a clean rounded outline.
+  // The text marker is only for text, where it lines up with the words.
+  const needsFrame = (el: HTMLElement) => el.matches("a, button") || !!el.querySelector("img, picture, svg");
+  const frameAround = (el: HTMLElement) => {
+    const r = el.getBoundingClientRect();
+    const radius = parseFloat(getComputedStyle(el).borderTopLeftRadius) || 0;
+    const f = document.createElement("span");
+    f.className = "sherlock-frame";
+    f.setAttribute("aria-hidden", "true");
+    f.style.left = `${r.left - 6}px`;
+    f.style.top = `${r.top - 6}px`;
+    f.style.width = `${r.width + 12}px`;
+    f.style.height = `${r.height + 12}px`;
+    f.style.borderRadius = `${Math.max(12, radius + 6)}px`;
+    if (reduced) f.style.animation = "none";
+    document.body.appendChild(f);
+    marks.push(f);
+    return r.bottom + 6;
+  };
   const highlight = (el: HTMLElement) => {
+    if (needsFrame(el)) return frameAround(el);
     let delay = 0;
     let bottom = el.getBoundingClientRect().bottom;
     const light = isLight(el);
