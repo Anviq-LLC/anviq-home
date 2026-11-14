@@ -143,6 +143,7 @@ export function Sherlock() {
   const [input, setInput] = useState("");
   const [cue, setCue] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
+  const [opened, setOpened] = useState(false);
   const reducedMotion = useReducedMotion();
   const navigate = useNavigate();
   const location = useLocation();
@@ -235,6 +236,7 @@ export function Sherlock() {
   };
 
   useEffect(() => () => route.current?.cancel(), []);
+
   // Arriving from a sales site's "Find my fit" link opens the fit check.
   useEffect(() => {
     const params = new URLSearchParams(location.search);
@@ -423,6 +425,9 @@ export function Sherlock() {
                     Question {view.step + 1} of {QUESTIONS[view.who].length}
                   </p>
                   <p className="sherlock-text">{QUESTIONS[view.who][view.step].text}</p>
+                  {view.step + 1 === QUESTIONS[view.who].length && (
+                    <p className="sherlock-note">After this one, I will open the site that fits you in a new tab and start the walkthrough there.</p>
+                  )}
                   <div className="sherlock-options">
                     {QUESTIONS[view.who][view.step].options.map((o) => (
                       <button
@@ -431,7 +436,16 @@ export function Sherlock() {
                         onClick={() => {
                           const answers = { ...view.answers, [QUESTIONS[view.who!][view.step].id]: o.value };
                           if (view.step + 1 < QUESTIONS[view.who!].length) setView({ kind: "fit", who: view.who, step: view.step + 1, answers });
-                          else setView({ kind: "result", who: view.who!, answers });
+                          else {
+                            const { app } = fitText(view.who!, answers);
+                            let win: Window | null = null;
+                            if (app) {
+                              win = window.open(`${app.href}#${fitHash(view.who!, answers)}`, "_blank");
+                              if (win) win.opener = null;
+                            }
+                            setOpened(Boolean(win));
+                            setView({ kind: "result", who: view.who!, answers });
+                          }
                         }}
                       >
                         {o.label}
@@ -444,6 +458,11 @@ export function Sherlock() {
                 const { rec, app } = fitText(view.who, view.answers);
                 return (
                   <>
+                    {app && opened && (
+                      <p className="sherlock-note" role="status">
+                        I opened {app.name} in a new tab and I am walking you through it there. Everything below stays here if you want it.
+                      </p>
+                    )}
                     {app ? (
                       <div className="sherlock-result">
                         <span className="sherlock-result-icon">
@@ -473,7 +492,7 @@ export function Sherlock() {
                     <div className="sherlock-actions">
                       {app && (
                         <AppLink app={app} className="sherlock-primary" hash={fitHash(view.who, view.answers)}>
-                          Take me to {app.name}
+                          {opened ? `Open ${app.name} again` : `Take me to ${app.name}`}
                         </AppLink>
                       )}
                       <a className={app ? "sherlock-secondary" : "sherlock-primary"} href={BOOKING} target="_blank" rel="noopener noreferrer" onClick={() => recordBookingClick()}>
