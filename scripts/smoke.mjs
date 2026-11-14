@@ -15,7 +15,12 @@ const executablePath = CANDIDATES.find((p) => fs.existsSync(p));
 if (!executablePath) throw new Error("No Chrome or Edge found. Set CHROME.");
 const axeSource = fs.readFileSync(path.join(path.dirname(fileURLToPath(import.meta.url)), "../node_modules/axe-core/axe.min.js"), "utf8");
 
-const browser = await puppeteer.launch({ executablePath, headless: true, args: ["--no-sandbox"] });
+const browser = await puppeteer.launch({
+  executablePath,
+  headless: true,
+  dumpio: !!process.env.CI,
+  args: ["--no-sandbox", "--disable-setuid-sandbox", "--disable-gpu", "--disable-dev-shm-usage"],
+});
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 let failures = 0;
 const check = (name, ok, extra = "") => {
