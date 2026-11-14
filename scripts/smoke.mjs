@@ -79,17 +79,22 @@ for (const [route, needle] of [["/explore/privacy", "Cloudflare Workers AI"], ["
   await page.click(".sherlock-fab");
   await sleep(1000);
   const labels = await page.$$eval(".sherlock-panel button, .sherlock-panel a", (e) => e.map((x) => x.textContent.trim()));
-  check("Sherlock opens with its main actions", ["Find my fit", "Talk to a person", "Watch a short tour"].every((l) => labels.includes(l)));
+  check("Sherlock opens with its main actions", ["Find my fit", "Talk to a person", "Walk me through this page"].every((l) => labels.includes(l)));
   await axe(page, "Sherlock panel");
   await page.evaluate(() => [...document.querySelectorAll(".sherlock-primary")].find((c) => c.textContent === "Find my fit").click());
   await sleep(300);
   await page.evaluate(() => [...document.querySelectorAll(".sherlock-options button")].find((c) => c.textContent.startsWith("A public body")).click());
+  for (let i = 0; i < 5; i++) {
+    await sleep(250);
+    await page.evaluate(() => document.querySelector(".sherlock-options button").click());
+  }
   await sleep(300);
-  check("fit check recommends Anviq Public", (await page.$eval(".sherlock-result-name", (e) => e.textContent).catch(() => "")) === "Anviq Public");
-  await page.click(".sherlock-back");
-  await page.click(".sherlock-back").catch(() => {});
-  await sleep(300);
-  await page.evaluate(() => [...document.querySelectorAll(".sherlock-chip")].find((c) => c.textContent === "Watch a short tour").click());
+  check("fit check recommends Anviq Public", (await page.$eval(".sherlock-result-name", (e) => e.textContent).catch(() => "")).includes("Anviq Public"));
+  await page.click(".sherlock-close, .sherlock-head .icon-button");
+  await sleep(500);
+  await page.click(".sherlock-fab");
+  await sleep(700);
+  await page.evaluate(() => [...document.querySelectorAll(".sherlock-chip")].find((c) => c.textContent === "Walk me through this page").click());
   let cursor = false;
   for (let i = 0; i < 20 && !cursor; i++) {
     await sleep(150);

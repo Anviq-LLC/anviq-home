@@ -59,7 +59,7 @@ for (const file of walk("src")) {
 
 const privacy = read("src/pages/Privacy.tsx");
 const cookies = read("src/pages/Cookies.tsx");
-for (const needle of ["Cloudflare Workers AI", "api.github.com", "github-contributions-api.jogruber.de", "avatars.githubusercontent.com", "280 characters"]) {
+for (const needle of ["Cloudflare Workers AI", "api.github.com", "github-contributions-api.jogruber.de", "avatars.githubusercontent.com", "280 characters", "The fit check", "Tours.", "sherlock=fit"]) {
   if (!privacy.includes(needle)) fail(`the privacy policy does not mention "${needle}"`);
 }
 for (const needle of ["Cloudflare Workers AI", "github-contributions-api.jogruber.de", "avatars.githubusercontent.com", "local and session storage"]) {

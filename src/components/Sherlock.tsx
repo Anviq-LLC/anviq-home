@@ -4,6 +4,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { ArrowLeft, ArrowUp, X } from "lucide-react";
 import { APPS } from "@/data/content";
+import { QUESTIONS, recommend, summaryLines, WHO, type Answers, type Who } from "@/data/fit";
 import { findNode, type SiteNode } from "@/lib/siteTree";
 import { matchNavigationIntent } from "@/lib/chatIntents";
 import { answerForIntent, findLocalSherlockIntent, intentById, shouldUseSemanticSherlockMatch } from "@/lib/sherlockCorpus";
@@ -12,15 +13,15 @@ import { motionOr, SPRING_MORPH } from "@/lib/motion";
 import { pushQuestionHistory } from "@/lib/suggest";
 import { setNavigatorSurfaceOpen } from "@/lib/navigatorSurface";
 import { findTarget, runRoute, type Step } from "@/lib/spotlight";
+import { firstSentence, NARRATION } from "@/data/narration";
 import { AppIcon, AppLink } from "@/components/AppLauncher";
 import { SherlockFace } from "@/components/SherlockFace";
 
-type App = (typeof APPS)[number];
 type View =
   | { kind: "home" }
   | { kind: "answer"; query: string; text: string; node?: SiteNode; children?: SiteNode[] }
-  | { kind: "fit"; step: "who" | "problem"; who?: string }
-  | { kind: "result"; app?: App; who: string; problem?: string };
+  | { kind: "fit"; who?: Who; step: number; answers: Answers }
+  | { kind: "result"; who: Who; answers: Answers };
 
 const BOOKING = "https://calendly.com/lvoss-anviq/30min?month=2026-09";
 const NAVIGATION_WORDS = /\b(open|show|take|go|browse|navigate|read|visit|book|schedule|meet|call)\b/i;
@@ -30,12 +31,6 @@ const QUICK: { label: string; intent: string }[] = [
   { label: "How long does it take?", intent: "timeline" },
   { label: "Who owns the code?", intent: "ownership" },
   { label: "Is it secure?", intent: "security" },
-];
-const PROBLEMS: { label: string; app?: string }[] = [
-  { label: "Repetitive work people do by hand", app: "agents" },
-  { label: "Systems that do not talk to each other", app: "build" },
-  { label: "An idea for new software", app: "build" },
-  { label: "I am not sure yet" },
 ];
 const CUE_KEY = "sherlock-cue";
 const CUE_PAGES: Record<string, string> = {
@@ -65,42 +60,74 @@ function routeFor(node: SiteNode): Step[] | null {
   return null;
 }
 
-const OVERVIEW_TOUR: Step[] = [
-  ...APPS.map((app, index) => ({ selector: `.apps-grid > a:nth-child(${index + 1})`, caption: `${app.name}: ${app.tag}`, hold: 1500 })),
-  { selector: 'a[href="/explore/projects"]', caption: "Selected work: what we have built", hold: 1500 },
-  { selector: ".welcome-section .primary-button, .files-welcome-document a", caption: "Start here when you are ready", hold: 1800 },
-];
-
 const isVisible = (el: Element) => {
   const r = el.getBoundingClientRect();
   return r.width > 0 && r.height > 0 && getComputedStyle(el).visibility !== "hidden";
 };
 
-// A short tour of the page the visitor is on: its headings in order, then the
-// button that starts a conversation.
+// The first real paragraph after a heading, skipping short lines such as dates.
+function bodyAfter(heading: Element): string {
+  let node = heading.nextElementSibling;
+  for (let i = 0; node && i < 6; i++, node = node.nextElementSibling) {
+    if (/^H[1-6]$/.test(node.tagName)) break;
+    const text = (node.textContent ?? "").replace(/\s+/g, " ").trim();
+    if (text.length > 45 && !/^last updated/i.test(text)) return text;
+  }
+  // The text may sit in the next section, so take the first real paragraph that follows.
+  const root = document.querySelector("main") ?? document.body;
+  for (const para of root.querySelectorAll("p")) {
+    const text = (para.textContent ?? "").replace(/\s+/g, " ").trim();
+    if (heading.compareDocumentPosition(para) & Node.DOCUMENT_POSITION_FOLLOWING && text.length > 45 && !/^last updated/i.test(text)) return text;
+  }
+  return "";
+}
+
+const norm = (text: string | null) => (text ?? "").replace(/\s+/g, " ").trim().toLowerCase();
+
+// A tour of the page the visitor is on. Written lines come first; any page
+// without them is read from its own headings and opening sentences.
 function tourFor(pathname: string): Step[] {
-  if (pathname === "/") return OVERVIEW_TOUR.filter((step) => findTarget(step.selector));
   const root = document.querySelector("main") ?? document.body;
   document.querySelectorAll("[data-sherlock-tour]").forEach((el) => el.removeAttribute("data-sherlock-tour"));
+  const headings = [...root.querySelectorAll<HTMLElement>("h1, h2, h3")].filter(isVisible);
   const steps: Step[] = [];
-  [...root.querySelectorAll<HTMLElement>("h1, h2")].filter(isVisible).slice(0, 5).forEach((heading, index) => {
-    heading.setAttribute("data-sherlock-tour", String(index));
-    steps.push({ selector: `[data-sherlock-tour="${index}"]`, caption: (heading.textContent ?? "").trim().slice(0, 46) || "This part", hold: 1500 });
-  });
+  const authored = NARRATION[pathname];
+  if (authored) {
+    authored.forEach((line, index) => {
+      let el: HTMLElement | null = null;
+      if (line.selector) el = findTarget(line.selector);
+      else if (line.find) el = headings.find((h) => norm(h.textContent).startsWith(norm(line.find!))) ?? null;
+      if (!el) return;
+      el.setAttribute("data-sherlock-tour", String(index));
+      steps.push({ selector: `[data-sherlock-tour="${index}"]`, say: line.say });
+    });
+  } else {
+    headings.slice(0, 4).forEach((heading, index) => {
+      const sentence = firstSentence(bodyAfter(heading)) || firstSentence(heading.parentElement?.textContent ?? "");
+      heading.setAttribute("data-sherlock-tour", String(index));
+      const name = (heading.textContent ?? "").trim();
+      steps.push({ selector: `[data-sherlock-tour="${index}"]`, say: index === 0 ? `${name}. ${sentence}`.trim() : `Next, ${name}. ${sentence}`.trim() });
+    });
+  }
   const cta = [...root.querySelectorAll<HTMLElement>(".primary-button, .page-cta a")].find(isVisible);
-  if (cta) {
+  if (cta && steps.length) {
     cta.setAttribute("data-sherlock-tour", "cta");
-    steps.push({ selector: '[data-sherlock-tour="cta"]', caption: "Start here when you are ready", hold: 1800 });
+    steps.push({ selector: '[data-sherlock-tour="cta"]', say: "When you are ready, this is where a conversation starts. A short call, no commitment." });
   }
   return steps;
 }
 
-function mailFor(app: App | undefined, who: string, problem?: string) {
+function fitText(who: Who, answers: Answers) {
+  const rec = recommend(who, answers);
+  const app = APPS.find((x) => x.id === rec.app);
+  return { rec, app, lines: [...summaryLines(who, answers), `Suggested fit: ${app ? app.name : "a short call first"}`] };
+}
+
+function mailFor(who: Who, answers: Answers) {
+  const { app, lines } = fitText(who, answers);
   const subject = app ? `${app.name}: fit check` : "A conversation about a workflow";
-  const lines = ["Hello Leonardo,", "", "I used the fit check on anviq.net.", `Who it is for: ${who}`];
-  if (problem) lines.push(`Biggest headache: ${problem}`);
-  lines.push("", "A few lines about my situation:", "");
-  return `mailto:lvoss@anviq.net?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(lines.join("\n"))}`;
+  const body = ["Hello Leonardo,", "", "I used the fit check on anviq.net.", ...lines, "", "A few lines about my situation:", ""].join("\n");
+  return `mailto:lvoss@anviq.net?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
 }
 
 export function Sherlock() {
@@ -108,6 +135,7 @@ export function Sherlock() {
   const [view, setView] = useState<View>({ kind: "home" });
   const [input, setInput] = useState("");
   const [cue, setCue] = useState<string | null>(null);
+  const [copied, setCopied] = useState(false);
   const reducedMotion = useReducedMotion();
   const navigate = useNavigate();
   const location = useLocation();
@@ -200,6 +228,15 @@ export function Sherlock() {
   };
 
   useEffect(() => () => route.current?.cancel(), []);
+  // Arriving from a sales site's "Find my fit" link opens the fit check.
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    if (params.get("sherlock") !== "fit") return;
+    engage({ kind: "fit", step: 0, answers: {} });
+    params.delete("sherlock");
+    navigate({ pathname: location.pathname, search: params.toString() }, { replace: true });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
   useEffect(() => {
     if (!open) return;
     const onKeyDown = (event: KeyboardEvent) => {
@@ -251,7 +288,26 @@ export function Sherlock() {
     return () => window.clearTimeout(timer);
   }, [cue]);
 
-  const back = () => setView({ kind: "home" });
+  const back = () => {
+    if (view.kind === "fit") {
+      if (view.who && view.step > 0) return setView({ ...view, step: view.step - 1 });
+      if (view.who) return setView({ kind: "fit", step: 0, answers: {} });
+    }
+    if (view.kind === "result") {
+      const last = QUESTIONS[view.who].length - 1;
+      return setView({ kind: "fit", who: view.who, step: last, answers: view.answers });
+    }
+    setView({ kind: "home" });
+  };
+  const copySummary = async (who: Who, answers: Answers) => {
+    try {
+      await navigator.clipboard.writeText(fitText(who, answers).lines.join("\n"));
+      setCopied(true);
+      window.setTimeout(() => setCopied(false), 2200);
+    } catch {
+      // Clipboard can be blocked; the email button still carries the same summary.
+    }
+  };
 
   return (
     <div className={`sherlock${open ? " is-open" : ""}`}>
@@ -284,17 +340,17 @@ export function Sherlock() {
                 <>
                   <p className="sherlock-text">How can I help?</p>
                   <div className="sherlock-actions">
-                    <button type="button" className="sherlock-primary" onClick={() => setView({ kind: "fit", step: "who" })}>
+                    <button type="button" className="sherlock-primary" onClick={() => setView({ kind: "fit", step: 0, answers: {} })}>
                       Find my fit
                     </button>
                     <a className="sherlock-secondary" href={BOOKING} target="_blank" rel="noopener noreferrer" onClick={() => recordBookingClick()}>
                       Talk to a person
                     </a>
                   </div>
-                  <p className="sherlock-label">Or let me show you around</p>
+                  <p className="sherlock-label">Or let me talk you through it</p>
                   <div className="sherlock-chips">
                     <button type="button" className="sherlock-chip" onClick={tour}>
-                      Watch a short tour
+                      Walk me through this page
                     </button>
                   </div>
                   <p className="sherlock-label">Quick answers</p>
@@ -342,62 +398,90 @@ export function Sherlock() {
                   )}
                 </>
               )}
-              {view.kind === "fit" && view.step === "who" && (
+              {view.kind === "fit" && !view.who && (
                 <>
                   <p className="sherlock-text">Who is this for?</p>
                   <div className="sherlock-options">
-                    <button type="button" onClick={() => setView({ kind: "fit", step: "problem", who: "A business or team" })}>
-                      A business or team
-                    </button>
-                    <button type="button" onClick={() => setView({ kind: "result", app: APPS.find((a) => a.id === "public"), who: "A public body" })}>
-                      A public body: city, county, school, library
-                    </button>
-                  </div>
-                </>
-              )}
-              {view.kind === "fit" && view.step === "problem" && (
-                <>
-                  <p className="sherlock-text">What is the biggest headache?</p>
-                  <div className="sherlock-options">
-                    {PROBLEMS.map((p) => (
-                      <button key={p.label} type="button" onClick={() => setView({ kind: "result", app: APPS.find((a) => a.id === p.app), who: view.who ?? "A business or team", problem: p.label })}>
-                        {p.label}
+                    {WHO.map((w) => (
+                      <button key={w.value} type="button" onClick={() => setView({ kind: "fit", who: w.value as Who, step: 0, answers: {} })}>
+                        {w.label}
                       </button>
                     ))}
                   </div>
                 </>
               )}
-              {view.kind === "result" && (
+              {view.kind === "fit" && view.who && (
                 <>
-                  {view.app ? (
-                    <div className="sherlock-result">
-                      <span className="sherlock-result-icon">
-                        <AppIcon app={view.app} />
-                      </span>
-                      <div>
-                        <p className="sherlock-result-name">{view.app.name}</p>
-                        <p className="sherlock-query">{view.app.tag}</p>
-                      </div>
-                    </div>
-                  ) : (
-                    <p className="sherlock-text">Not sure yet is a fine place to start. A short call is the quickest way to find out.</p>
-                  )}
-                  {view.app && <p className="sherlock-text">{view.app.body}</p>}
-                  <div className="sherlock-actions">
-                    {view.app && (
-                      <AppLink app={view.app} className="sherlock-primary">
-                        Open {view.app.name}
-                      </AppLink>
-                    )}
-                    <a className={view.app ? "sherlock-secondary" : "sherlock-primary"} href={BOOKING} target="_blank" rel="noopener noreferrer" onClick={() => recordBookingClick()}>
-                      Book a call
-                    </a>
-                    <a className="sherlock-secondary" href={mailFor(view.app, view.who, view.problem)}>
-                      Email my answers
-                    </a>
+                  <p className="sherlock-progress">
+                    Question {view.step + 1} of {QUESTIONS[view.who].length}
+                  </p>
+                  <p className="sherlock-text">{QUESTIONS[view.who][view.step].text}</p>
+                  <div className="sherlock-options">
+                    {QUESTIONS[view.who][view.step].options.map((o) => (
+                      <button
+                        key={o.value}
+                        type="button"
+                        onClick={() => {
+                          const answers = { ...view.answers, [QUESTIONS[view.who!][view.step].id]: o.value };
+                          if (view.step + 1 < QUESTIONS[view.who!].length) setView({ kind: "fit", who: view.who, step: view.step + 1, answers });
+                          else setView({ kind: "result", who: view.who!, answers });
+                        }}
+                      >
+                        {o.label}
+                      </button>
+                    ))}
                   </div>
                 </>
               )}
+              {view.kind === "result" && (() => {
+                const { rec, app } = fitText(view.who, view.answers);
+                return (
+                  <>
+                    {app ? (
+                      <div className="sherlock-result">
+                        <span className="sherlock-result-icon">
+                          <AppIcon app={app} />
+                        </span>
+                        <div>
+                          <p className="sherlock-result-name">{rec.headline}</p>
+                          <p className="sherlock-query">{app.tag}</p>
+                        </div>
+                      </div>
+                    ) : (
+                      <p className="sherlock-result-name">{rec.headline}</p>
+                    )}
+                    <p className="sherlock-label">Why this fits</p>
+                    <ul className="sherlock-list">
+                      {rec.reasons.map((r) => (
+                        <li key={r}>{r}</li>
+                      ))}
+                    </ul>
+                    {rec.note && <p className="sherlock-note">{rec.note}</p>}
+                    <p className="sherlock-label">What to bring to the first call</p>
+                    <ul className="sherlock-list">
+                      {rec.bring.map((r) => (
+                        <li key={r}>{r}</li>
+                      ))}
+                    </ul>
+                    <div className="sherlock-actions">
+                      {app && (
+                        <AppLink app={app} className="sherlock-primary">
+                          Open {app.name}
+                        </AppLink>
+                      )}
+                      <a className={app ? "sherlock-secondary" : "sherlock-primary"} href={BOOKING} target="_blank" rel="noopener noreferrer" onClick={() => recordBookingClick()}>
+                        Book a call
+                      </a>
+                      <a className="sherlock-secondary" href={mailFor(view.who, view.answers)}>
+                        Email my answers
+                      </a>
+                      <button type="button" className="sherlock-secondary" onClick={() => void copySummary(view.who, view.answers)}>
+                        {copied ? "Copied" : "Copy my summary"}
+                      </button>
+                    </div>
+                  </>
+                );
+              })()}
             </div>
             <form className="sherlock-form" onSubmit={submit}>
               <label htmlFor={inputId} className="sr-only">
@@ -414,7 +498,7 @@ export function Sherlock() {
       </AnimatePresence>
       {cue && !open && (
         <div className="sherlock-cue" role="region" aria-label="Sherlock suggestion">
-          <button type="button" className="sherlock-cue-go" onClick={() => engage(location.pathname === "/explore/services" || location.pathname === "/explore/engagement" ? { kind: "fit", step: "who" } : { kind: "home" })}>
+          <button type="button" className="sherlock-cue-go" onClick={() => engage(location.pathname === "/explore/services" || location.pathname === "/explore/engagement" ? { kind: "fit", step: 0, answers: {} } : { kind: "home" })}>
             {cue}
           </button>
           <button type="button" className="sherlock-cue-x" aria-label="Dismiss suggestion" onClick={() => setCue(null)}>

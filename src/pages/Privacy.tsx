@@ -3,7 +3,7 @@ import { DocumentPage } from '@/components/DocumentPage'
 export function Privacy() {
   return (
     <DocumentPage title="Privacy Policy">
-      <p className="legal-updated">Last updated: 13 November 2026</p>
+      <p className="legal-updated">Last updated: 14 November 2026</p>
       <div className="legal-copy">
       <p>
         This Privacy Policy explains how we handle personal data in connection with this website (the
@@ -63,10 +63,20 @@ export function Privacy() {
           its own terms. Please do not type personal or confidential information into this box.
         </li>
         <li>
-          <strong>Email my answers.</strong> This opens your own email app with a message already written. Nothing is
-          sent to us until you press send in your email app.
+          <strong>The fit check.</strong> Your answers stay in your browser while you use it. They go nowhere unless
+          you choose: "Email my answers" opens your own email app with a message already written, and "Copy my
+          summary" copies the text to your clipboard. Nothing is sent to us until you press send in your email app.
+        </li>
+        <li>
+          <strong>Tours.</strong> When Sherlock talks you through a page, he uses text we wrote, shows a cursor and
+          marks the text on your screen. This happens in your browser and sends nothing.
         </li>
       </ul>
+      <p>
+        Links between our sites can carry a harmless marker such as open=1 or sherlock=fit. It is used only to play
+        the opening animation or to open the right view. It holds no personal data and is removed from the address
+        bar.
+      </p>
       <p>
         Sherlock also keeps a few small notes in your browser so it can offer to continue where you left off. They
         stay on your device and are not sent to us. See our <a href="/explore/cookies">Cookie Policy</a> for the list.

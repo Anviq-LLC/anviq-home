@@ -2416,7 +2416,7 @@ svg {
 @media (min-width: 1200px) and (hover: hover) and (pointer: fine) { .sherlock { right: 28px; bottom: 28px; } }
 .sherlock-fab { position: relative; width: 60px; height: 60px; border-radius: 50%; display: grid; place-items: center; background: var(--surface); box-shadow: 0 8px 22px rgb(20 30 50 / 18%), 0 0 0 1px var(--line); }
 .sherlock-fab:focus-visible { outline: 3px solid color-mix(in srgb, var(--focus) 60%, transparent); outline-offset: 3px; }
-.sherlock-face { width: 44px; height: 44px; overflow: visible; filter: drop-shadow(0 5px 6px rgb(217 119 6 / 35%)); transition: transform 160ms cubic-bezier(0.16, 1, 0.3, 1); }
+.sherlock-face { width: 44px; height: 44px; overflow: visible; filter: drop-shadow(0 6px 7px rgb(228 80 10 / 32%)); transition: transform 160ms cubic-bezier(0.16, 1, 0.3, 1); }
 .sherlock-fab:hover .sherlock-face { transform: scale(1.08); }
 .sherlock-eyes { transform-box: fill-box; transform-origin: center; transform: translate(var(--ex, 0px), var(--ey, 0px)); transition: transform 90ms ease-out; }
 .sherlock-face.is-blinking .sherlock-eyes { transform: translate(var(--ex, 0px), var(--ey, 0px)) scaleY(0.12); transition-duration: 50ms; }
@@ -2470,3 +2470,14 @@ svg {
 .sherlock-stop:hover { color: var(--accent); }
 .sherlock-stop:focus-visible { outline: 3px solid color-mix(in srgb, var(--focus) 60%, transparent); outline-offset: 3px; }
 @media (min-width: 1200px) and (hover: hover) and (pointer: fine) { .sherlock-stop { bottom: 28px; left: 28px; } }
+.sherlock-mark { position: fixed; z-index: 1990; pointer-events: none; border-radius: 3px 6px 4px 7px; background: rgb(255 175 56 / 55%); mix-blend-mode: multiply; transform-origin: left center; animation: sh-mark 520ms cubic-bezier(0.3, 0.7, 0.2, 1) both; }
+@keyframes sh-mark { from { clip-path: inset(0 100% 0 0); } to { clip-path: inset(0 0 0 0); } }
+@media (prefers-color-scheme: dark) { .sherlock-mark { mix-blend-mode: normal; background: rgb(255 175 56 / 34%); } }
+.sherlock-say { position: fixed; z-index: 2002; width: min(340px, calc(100vw - 24px)); padding: 14px 16px 12px; border-radius: 18px; background: var(--surface); color: var(--text); box-shadow: 0 16px 44px rgb(20 30 50 / 28%), 0 0 0 1px var(--line); animation: sh-fade 240ms ease-out both; }
+.sherlock-say p { margin: 0 0 10px; font-size: 15px; line-height: 1.55; }
+.sherlock-say button { min-height: 40px; padding: 0 16px; border-radius: 9999px; background: var(--accent); color: #fff; font-size: 14px; font-weight: 600; }
+@media (prefers-color-scheme: dark) { .sherlock-say button { color: #08162b; } }
+.sherlock-progress { margin-bottom: 4px !important; color: var(--muted); font-size: 12px; font-weight: 650; letter-spacing: 0.02em; }
+.sherlock-list { margin: 0; padding-left: 18px; list-style: disc; display: grid; gap: 6px; font-size: 14.5px; line-height: 1.5; color: var(--text); }
+.sherlock-note { margin-top: 12px !important; padding: 10px 12px; border-radius: 12px; background: var(--hover); font-size: 13.5px; line-height: 1.5; color: var(--text); }
+.sherlock-mark.is-light { mix-blend-mode: normal; border-radius: 0; background: rgb(255 255 255 / 20%); box-shadow: inset 0 -3px 0 #ffaf38; }

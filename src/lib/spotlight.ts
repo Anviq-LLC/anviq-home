@@ -1,11 +1,15 @@
 // Sherlock's second mouse. On request it flies a labelled cursor out of the
-// character to a real control, rings it, and clicks it if asked. Any real input
-// from the visitor, or the Stop button, ends it at once.
+// character to a real control, rings it, and clicks it if asked. On a tour it
+// also talks: the cursor arrives, an orange highlighter marks the text being
+// discussed, and a speech bubble says it in plain words. Any real input from
+// the visitor, or the Stop button, ends it at once.
 
 export interface Step {
   selector: string;
   click?: boolean;
   caption?: string;
+  /** What Sherlock says about this part of the page. */
+  say?: string;
   /** How long to stay on a step that is only pointed at. */
   hold?: number;
 }
@@ -19,6 +23,8 @@ const GRACE_MS = 450;
 
 const reducedMotion = () => window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 const ease = (t: number) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
+/** Time to read a sentence comfortably, with a floor. */
+const readTime = (text: string) => Math.max(2600, text.split(/\s+/).length * 340 + 900);
 
 /** First visible element for a selector, or null when nothing is on screen. */
 export function findTarget(selector: string): HTMLElement | null {
@@ -33,7 +39,31 @@ export function findTarget(selector: string): HTMLElement | null {
 
 function fullyInView(el: Element) {
   const r = el.getBoundingClientRect();
-  return r.top >= 70 && r.bottom <= window.innerHeight - 90 && r.left >= 0 && r.right <= window.innerWidth;
+  return r.top >= 70 && r.bottom <= window.innerHeight - 190 && r.left >= 0 && r.right <= window.innerWidth;
+}
+
+/** Light text sits on a dark ground, where the marker must not blend away. */
+function isLight(el: Element): boolean {
+  const c = getComputedStyle(el).color.match(/[\d.]+/g)?.map(Number) ?? [];
+  return c.length >= 3 && (0.299 * c[0] + 0.587 * c[1] + 0.114 * c[2]) / 255 > 0.6;
+}
+
+/** One rectangle per line of text, merged so a marker follows the lines like a pen. */
+function lineRects(el: Element): DOMRect[] {
+  const range = document.createRange();
+  range.selectNodeContents(el);
+  const rects = [...range.getClientRects()].filter((r) => r.width > 2 && r.height > 2).sort((a, b) => a.top - b.top || a.left - b.left);
+  const lines: { left: number; right: number; top: number; bottom: number }[] = [];
+  for (const r of rects) {
+    const line = lines.find((l) => Math.abs(l.top - r.top) < r.height * 0.5);
+    if (line) {
+      line.left = Math.min(line.left, r.left);
+      line.right = Math.max(line.right, r.right);
+      line.top = Math.min(line.top, r.top);
+      line.bottom = Math.max(line.bottom, r.bottom);
+    } else lines.push({ left: r.left, right: r.right, top: r.top, bottom: r.bottom });
+  }
+  return lines.map((l) => new DOMRect(l.left, l.top, l.right - l.left, l.bottom - l.top));
 }
 
 export function runRoute(steps: Step[], { from }: RouteOptions): { cancel: () => void; finished: Promise<RouteResult> } {
@@ -43,7 +73,10 @@ export function runRoute(steps: Step[], { from }: RouteOptions): { cancel: () =>
   let label: HTMLSpanElement | null = null;
   let tag: HTMLSpanElement | null = null;
   let stop: HTMLButtonElement | null = null;
+  let bubble: HTMLDivElement | null = null;
   let pointed: HTMLElement | null = null;
+  let marks: HTMLElement[] = [];
+  let skip: (() => void) | null = null;
   let pos = { ...from };
   const started = performance.now();
   const reduced = reducedMotion();
@@ -55,11 +88,16 @@ export function runRoute(steps: Step[], { from }: RouteOptions): { cancel: () =>
     pointed = null;
     tag?.remove();
     tag = null;
+    bubble?.remove();
+    bubble = null;
+    marks.forEach((m) => m.remove());
+    marks = [];
   };
   const end = (result: RouteResult) => {
     if (done) return;
     done = true;
     CANCEL_EVENTS.forEach((type) => window.removeEventListener(type, onUser, true));
+    window.removeEventListener("resize", onResize);
     clear();
     stop?.remove();
     const g = ghost;
@@ -72,12 +110,31 @@ export function runRoute(steps: Step[], { from }: RouteOptions): { cancel: () =>
   };
   const onUser = (event: Event) => {
     if (!event.isTrusted || performance.now() - started < GRACE_MS) return;
+    if (event.target instanceof Element && event.target.closest(".sherlock-say")) return;
+    cancelled = true;
+    end("cancelled");
+  };
+  const onResize = () => {
     cancelled = true;
     end("cancelled");
   };
   CANCEL_EVENTS.forEach((type) => window.addEventListener(type, onUser, true));
+  window.addEventListener("resize", onResize);
 
   const wait = (ms: number) => new Promise<void>((r) => window.setTimeout(r, ms));
+  /** Waits for the time to pass, or for the visitor to press Next. */
+  const waitOrNext = (ms: number) =>
+    new Promise<void>((r) => {
+      const t = window.setTimeout(() => {
+        skip = null;
+        r();
+      }, ms);
+      skip = () => {
+        window.clearTimeout(t);
+        skip = null;
+        r();
+      };
+    });
   const waitFor = async (selector: string, timeout = 1800) => {
     const t0 = performance.now();
     while (!cancelled && performance.now() - t0 < timeout) {
@@ -135,6 +192,64 @@ export function runRoute(steps: Step[], { from }: RouteOptions): { cancel: () =>
     document.body.appendChild(tag);
   };
 
+  // The text being discussed: the heading, and the paragraph right after it.
+  const markTargets = (el: HTMLElement): Element[] => {
+    const out: Element[] = [el];
+    let next = el.nextElementSibling;
+    while (next && !/^(P|UL|OL)$/.test(next.tagName) && !/^H[1-6]$/.test(next.tagName)) next = next.firstElementChild ? next.firstElementChild : next.nextElementSibling;
+    if (next && /^(P)$/.test(next.tagName)) out.push(next);
+    return out;
+  };
+  const highlight = (el: HTMLElement) => {
+    let delay = 0;
+    let bottom = el.getBoundingClientRect().bottom;
+    const light = isLight(el);
+    for (const target of markTargets(el)) {
+      for (const r of lineRects(target)) {
+        const m = document.createElement("span");
+        m.className = light ? "sherlock-mark is-light" : "sherlock-mark";
+        m.setAttribute("aria-hidden", "true");
+        const padX = 5;
+        m.style.left = `${r.left - padX}px`;
+        m.style.top = `${r.top + r.height * 0.14}px`;
+        m.style.width = `${r.width + padX * 2}px`;
+        m.style.height = `${r.height * 0.74}px`;
+        m.style.transform = `rotate(${(Math.random() - 0.5) * 0.7}deg)`;
+        if (!reduced) {
+          m.style.animationDelay = `${delay}ms`;
+          m.style.animationDuration = `${Math.min(700, 260 + r.width * 1.1)}ms`;
+        } else m.style.animation = "none";
+        delay += reduced ? 0 : Math.min(700, 260 + r.width * 1.1) * 0.8;
+        document.body.appendChild(m);
+        marks.push(m);
+        bottom = Math.max(bottom, r.bottom);
+      }
+    }
+    return bottom;
+  };
+  const speak = (el: HTMLElement, text: string, bottom: number, last: boolean) => {
+    bubble = document.createElement("div");
+    bubble.className = "sherlock-say";
+    bubble.setAttribute("role", "status");
+    const p = document.createElement("p");
+    p.textContent = text;
+    bubble.appendChild(p);
+    const next = document.createElement("button");
+    next.type = "button";
+    next.textContent = last ? "Done" : "Next";
+    next.addEventListener("click", (event) => {
+      event.stopPropagation();
+      skip?.();
+    });
+    bubble.appendChild(next);
+    document.body.appendChild(bubble);
+    const r = el.getBoundingClientRect();
+    const height = bubble.offsetHeight;
+    const below = bottom + 16 + height < window.innerHeight - 8;
+    bubble.style.left = `${Math.max(12, Math.min(r.left, window.innerWidth - bubble.offsetWidth - 12))}px`;
+    bubble.style.top = below ? `${bottom + 16}px` : `${Math.max(8, r.top - height - 16)}px`;
+  };
+
   (async () => {
     stop = document.createElement("button");
     stop.type = "button";
@@ -157,20 +272,29 @@ export function runRoute(steps: Step[], { from }: RouteOptions): { cancel: () =>
       document.body.appendChild(ghost);
       place(from.x, from.y);
     }
-    for (const step of steps) {
+    for (let index = 0; index < steps.length; index++) {
+      const step = steps[index];
       if (cancelled) return;
       const el = await waitFor(step.selector);
       if (!el) return end("missing");
-      if (label) label.textContent = step.caption ?? "Sherlock";
+      if (label) label.textContent = step.say ? "Sherlock" : (step.caption ?? "Sherlock");
       if (!fullyInView(el)) {
         el.scrollIntoView({ block: "center", behavior: reduced ? "auto" : "smooth" });
         await settle(el);
       }
       if (cancelled) return;
       const rect = el.getBoundingClientRect();
-      if (!reduced) await fly({ x: rect.left + rect.width * 0.5, y: rect.top + rect.height * 0.58 });
+      if (!reduced) await fly({ x: rect.left + Math.min(rect.width * 0.5, 160), y: rect.top + rect.height * 0.62 });
       if (cancelled) return;
       clear();
+      if (step.say) {
+        const bottom = highlight(el);
+        speak(el, step.say, bottom, index === steps.length - 1);
+        await waitOrNext(readTime(step.say));
+        if (cancelled) return;
+        clear();
+        continue;
+      }
       pointed = el;
       el.setAttribute("data-sherlock-pointed", "");
       if (reduced && step.caption) caption(el, step.caption);
