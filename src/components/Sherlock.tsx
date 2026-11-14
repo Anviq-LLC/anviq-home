@@ -23,7 +23,7 @@ type View =
   | { kind: "fit"; who?: Who; step: number; answers: Answers }
   | { kind: "result"; who: Who; answers: Answers };
 
-const BOOKING = "https://calendly.com/lvoss-anviq/30min?month=2026-09";
+const BOOKING = "https://calendly.com/lvoss-anviq/30min";
 const NAVIGATION_WORDS = /\b(open|show|take|go|browse|navigate|read|visit|book|schedule|meet|call)\b/i;
 const QUICK: { label: string; intent: string }[] = [
   { label: "How much does it cost?", intent: "price" },
@@ -133,7 +133,7 @@ function fitHash(who: Who, answers: Answers) {
 function mailFor(who: Who, answers: Answers) {
   const { app, lines } = fitText(who, answers);
   const subject = app ? `${app.name}: fit check` : "A conversation about a workflow";
-  const body = ["Hello Leonardo,", "", "I used the fit check on anviq.net.", ...lines, "", "A few lines about my situation:", ""].join("\n");
+  const body = ["Hello Anviq team,", "", "I used the fit check on anviq.net.", ...lines, "", "A few lines about my situation:", ""].join("\n");
   return `mailto:lvoss@anviq.net?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
 }
 

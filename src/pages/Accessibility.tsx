@@ -43,7 +43,7 @@ export function Accessibility() {
       <h2>5. Tell us about a problem</h2>
       <p>
         If something on this website is hard or impossible for you to use, or you need information in another
-        format, contact our accessibility coordinator, Leonardo Voss, at{' '}
+        format, contact the Anviq team at{' '}
         <a href="mailto:lvoss@anviq.net?subject=Accessibility%20feedback">lvoss@anviq.net</a>. Please say which page you
         were on, what you were trying to do and what assistive technology you use, if any. We aim to reply within five
         working days and to fix confirmed barriers promptly.

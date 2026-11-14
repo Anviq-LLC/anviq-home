@@ -1,6 +1,6 @@
 # Anviq
 
-Anviq is an IT consulting and software company based in Europe. Leonardo Voss leads the work and is the person clients deal with. Anviq owns delivery from the first conversation through handover.
+Anviq is an IT consulting and software company based in Europe. The Anviq team leads the work and is who clients deal with. Anviq owns delivery from the first conversation through handover.
 
 Anviq works across custom software and automation, integration with existing systems, Service as a Software, forward-deployed engineering, and infrastructure where hosting, access, and data handling are agreed with the client.
 
