@@ -127,6 +127,12 @@ export default {
     if (url.pathname === "/api/sherlock") {
       return withSecurityHeaders(await handleSherlock(request, env));
     }
+    if (url.pathname.startsWith("/.well-known/")) {
+      // The app answers unknown paths with its HTML page; well-known files must be real or a plain 404.
+      const asset = await env.ASSETS.fetch(request);
+      if ((asset.headers.get("content-type") ?? "").includes("text/html")) return withSecurityHeaders(new Response("Not found", { status: 404 }), url.pathname);
+      return withSecurityHeaders(asset, url.pathname);
+    }
     return withSecurityHeaders(await env.ASSETS.fetch(request), url.pathname);
   },
 };
