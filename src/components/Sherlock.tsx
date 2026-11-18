@@ -181,14 +181,15 @@ export function Sherlock() {
     } else if (node.route) navigate(node.route);
     dismiss();
   };
-  const play = (steps: Step[]) => {
+  const play = (steps: Step[], after?: () => void) => {
     route.current?.cancel();
     const box = faceRef.current?.getBoundingClientRect();
     const from = box ? { x: box.left + box.width / 2, y: box.top + box.height / 2 } : { x: window.innerWidth - 40, y: window.innerHeight - 40 };
     const run = runRoute(steps, { from });
     route.current = run;
-    void run.finished.then(() => {
+    void run.finished.then((result) => {
       if (route.current === run) route.current = null;
+      if (result === "done") after?.();
     });
   };
   const tour = () => {
@@ -200,7 +201,13 @@ export function Sherlock() {
     const steps = routeFor(node);
     dismiss();
     if (!steps) return openPage(node);
-    play(steps);
+    // After the click lands on the page, explain it instead of leaving the visitor there.
+    play(steps, node.kind === "link" ? undefined : () => {
+      window.setTimeout(() => {
+        const next = tourFor(window.location.pathname);
+        if (next.length) play(next);
+      }, 700);
+    });
   };
   const answerFor = (query: string, text: string, node?: SiteNode): View => ({ kind: "answer", query, text, node, children: node?.kind === "folder" ? node.children : undefined });
   const intentView = (query: string, id: string): View => {

@@ -99,6 +99,7 @@ export function runRoute(steps: Step[], { from }: RouteOptions): { cancel: () =>
     done = true;
     CANCEL_EVENTS.forEach((type) => window.removeEventListener(type, onUser, true));
     window.removeEventListener("resize", onResize);
+    window.removeEventListener("scroll", onScroll);
     clear();
     stop?.remove();
     const g = ghost;
@@ -204,7 +205,7 @@ export function runRoute(steps: Step[], { from }: RouteOptions): { cancel: () =>
   // Cards, buttons and anything with a picture get a clean rounded outline.
   // The text marker is only for text, where it lines up with the words.
   const needsFrame = (el: HTMLElement) => el.matches("a, button") || !!el.querySelector("img, picture, svg");
-  const frameAround = (el: HTMLElement) => {
+  const frameAround = (el: HTMLElement, instant = false) => {
     const r = el.getBoundingClientRect();
     const radius = parseFloat(getComputedStyle(el).borderTopLeftRadius) || 0;
     const f = document.createElement("span");
@@ -215,13 +216,13 @@ export function runRoute(steps: Step[], { from }: RouteOptions): { cancel: () =>
     f.style.width = `${r.width + 12}px`;
     f.style.height = `${r.height + 12}px`;
     f.style.borderRadius = `${Math.max(12, radius + 6)}px`;
-    if (reduced) f.style.animation = "none";
+    if (reduced || instant) f.style.animation = "none";
     document.body.appendChild(f);
     marks.push(f);
     return r.bottom + 6;
   };
-  const highlight = (el: HTMLElement) => {
-    if (needsFrame(el)) return frameAround(el);
+  const highlight = (el: HTMLElement, instant = false) => {
+    if (needsFrame(el)) return frameAround(el, instant);
     let delay = 0;
     let bottom = el.getBoundingClientRect().bottom;
     const light = isLight(el);
@@ -236,7 +237,7 @@ export function runRoute(steps: Step[], { from }: RouteOptions): { cancel: () =>
         m.style.width = `${r.width + padX * 2}px`;
         m.style.height = `${r.height * 0.74}px`;
         m.style.transform = `rotate(${(Math.random() - 0.5) * 0.7}deg)`;
-        if (!reduced) {
+        if (!reduced && !instant) {
           m.style.animationDelay = `${delay}ms`;
           m.style.animationDuration = `${Math.min(700, 260 + r.width * 1.1)}ms`;
         } else m.style.animation = "none";
@@ -248,6 +249,59 @@ export function runRoute(steps: Step[], { from }: RouteOptions): { cancel: () =>
     }
     return bottom;
   };
+  let shown: { el: HTMLElement; bottom: number } | null = null;
+  // Below the text, else above, else beside it, else docked low, so the heading is never covered.
+  const positionBubble = (el: HTMLElement, bottom: number) => {
+    if (!bubble) return;
+    const r = el.getBoundingClientRect();
+    const h = bubble.offsetHeight;
+    const w = bubble.offsetWidth;
+    const vw = window.innerWidth;
+    const vh = window.innerHeight;
+    let left = Math.max(12, Math.min(r.left, vw - w - 12));
+    let top: number;
+    if (bottom + 16 + h < vh - 8) top = bottom + 16;
+    else if (r.top - h - 16 >= 8) top = r.top - h - 16;
+    else if (r.right + 16 + w <= vw - 12) {
+      left = r.right + 16;
+      top = Math.max(8, Math.min(r.top, vh - h - 8));
+    } else if (r.left - 16 - w >= 12) {
+      left = r.left - 16 - w;
+      top = Math.max(8, Math.min(r.top, vh - h - 8));
+    } else top = Math.max(8, vh - h - 24);
+    bubble.style.left = `${left}px`;
+    bubble.style.top = `${top}px`;
+  };
+  // Highlights that would sit under the bubble are dropped, so he never talks over the text he marks.
+  const trimCovered = () => {
+    if (!bubble) return;
+    const b = bubble.getBoundingClientRect();
+    marks = marks.filter((m) => {
+      if (!m.classList.contains("sherlock-mark")) return true;
+      const r = m.getBoundingClientRect();
+      const w = Math.min(r.right, b.right) - Math.max(r.left, b.left);
+      const h = Math.min(r.bottom, b.bottom) - Math.max(r.top, b.top);
+      if (w > 0 && h > 0 && (w * h) / (r.width * r.height) > 0.25) {
+        m.remove();
+        return false;
+      }
+      return true;
+    });
+  };
+  let tick = 0;
+  const onScroll = () => {
+    if (tick) return;
+    tick = requestAnimationFrame(() => {
+      tick = 0;
+      if (!shown || cancelled || !bubble) return;
+      marks.forEach((m) => m.remove());
+      marks = [];
+      shown.bottom = highlight(shown.el, true);
+      positionBubble(shown.el, shown.bottom);
+      trimCovered();
+    });
+  };
+  window.addEventListener("scroll", onScroll, { passive: true });
   const speak = (el: HTMLElement, text: string, bottom: number, last: boolean) => {
     bubble = document.createElement("div");
     bubble.className = "sherlock-say";
@@ -277,11 +331,9 @@ export function runRoute(steps: Step[], { from }: RouteOptions): { cancel: () =>
     row.appendChild(pause);
     bubble.appendChild(row);
     document.body.appendChild(bubble);
-    const r = el.getBoundingClientRect();
-    const height = bubble.offsetHeight;
-    const below = bottom + 16 + height < window.innerHeight - 8;
-    bubble.style.left = `${Math.max(12, Math.min(r.left, window.innerWidth - bubble.offsetWidth - 12))}px`;
-    bubble.style.top = below ? `${bottom + 16}px` : `${Math.max(8, r.top - height - 16)}px`;
+    shown = { el, bottom };
+    positionBubble(el, bottom);
+    trimCovered();
   };
 
   (async () => {
@@ -314,7 +366,7 @@ export function runRoute(steps: Step[], { from }: RouteOptions): { cancel: () =>
       if (label) label.textContent = step.say ? "Sherlock" : (step.caption ?? "Sherlock");
       if (!fullyInView(el)) {
         if (window.matchMedia("(max-width: 759px)").matches) window.scrollTo({ top: window.pageYOffset + el.getBoundingClientRect().top - 110, behavior: reduced ? "auto" : "smooth" });
-        else el.scrollIntoView({ block: "center", behavior: reduced ? "auto" : "smooth" });
+        else window.scrollTo({ top: window.pageYOffset + el.getBoundingClientRect().top - Math.round(window.innerHeight * 0.2), behavior: reduced ? "auto" : "smooth" });
         await settle(el);
       }
       if (cancelled) return;

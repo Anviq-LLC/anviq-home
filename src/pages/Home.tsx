@@ -1812,7 +1812,7 @@ export function Home() {
             animKey={`${active}-${slug ?? ""}`}
             onEnter={syncScrollAndFocus}
           >
-            <Suspense fallback={null}>{content}</Suspense>
+            <Suspense fallback={<div className="page-loading" data-page={active} aria-hidden="true" />}>{content}</Suspense>
           </ExplorerPane>
         </main>
         <div className="explorer-status" role="region" aria-label="Page status">

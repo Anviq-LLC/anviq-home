@@ -1,15 +1,17 @@
 # Anviq
 
-Anviq is an IT consulting and software company based in Europe. The Anviq team leads the work and is who clients deal with. Anviq owns delivery from the first conversation through handover.
+> Anviq is an IT consulting and software company based in Europe. The Anviq team leads the work and is who clients deal with. Anviq owns delivery from the first conversation through handover.
 
 Anviq works across custom software and automation, integration with existing systems, Service as a Software, forward-deployed engineering, and infrastructure where hosting, access, and data handling are agreed with the client.
 
-Selected work:
-- https://anviq.net/projects/agents: Persistent AI teammates and isolated execution infrastructure.
-- https://anviq.net/projects/steadyward: Read-only behavioural retention infrastructure for MT4/MT5 brokers.
-- https://anviq.net/projects/lv-matching: Multi-tenant construction bill-of-quantities matching.
-- https://anviq.net/projects/addreach: German-market outbound sending infrastructure.
-- https://anviq.net/projects/recruitment-crm: Deterministic recruitment workflow software.
+## Selected work
 
-Start with a conversation or a scoped technical assessment:
-https://anviq.net/explore/engagement
+- [Anviq Agents](https://anviq.net/projects/agents): persistent AI teammates and isolated execution infrastructure
+- [Steadyward](https://anviq.net/projects/steadyward): read-only behavioural retention infrastructure for MT4/MT5 brokers
+- [LV Matching](https://anviq.net/projects/lv-matching): multi-tenant construction bill-of-quantities matching
+- [Addreach](https://anviq.net/projects/addreach): German-market outbound sending infrastructure
+- [Recruitment CRM](https://anviq.net/projects/recruitment-crm): deterministic recruitment workflow software
+
+## Start
+
+- [Engagement](https://anviq.net/explore/engagement): start with a conversation or a scoped technical assessment

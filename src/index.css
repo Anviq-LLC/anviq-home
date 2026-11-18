@@ -2416,7 +2416,7 @@ svg {
 @media (min-width: 1200px) and (hover: hover) and (pointer: fine) { .sherlock { right: 28px; bottom: 28px; } }
 .sherlock-fab { position: relative; width: 60px; height: 60px; border-radius: 50%; display: grid; place-items: center; background: var(--surface); box-shadow: 0 8px 22px rgb(20 30 50 / 18%), 0 0 0 1px var(--line); }
 .sherlock-fab:focus-visible { outline: 3px solid color-mix(in srgb, var(--focus) 60%, transparent); outline-offset: 3px; }
-.sherlock-face { width: 44px; height: 44px; overflow: visible; filter: drop-shadow(0 6px 7px rgb(228 80 10 / 32%)); transition: transform 160ms cubic-bezier(0.16, 1, 0.3, 1); }
+.sherlock-face { width: 44px; height: 44px; overflow: visible; transition: transform 160ms cubic-bezier(0.16, 1, 0.3, 1); }
 .sherlock-fab:hover .sherlock-face { transform: scale(1.08); }
 .sherlock-eyes { transform-box: fill-box; transform-origin: center; transform: translate(var(--ex, 0px), var(--ey, 0px)); transition: transform 90ms ease-out; }
 .sherlock-face.is-blinking .sherlock-eyes { transform: translate(var(--ex, 0px), var(--ey, 0px)) scaleY(0.12); transition-duration: 50ms; }
@@ -2486,7 +2486,6 @@ svg {
 
 .sherlock-say-row { display: flex; flex-wrap: wrap; gap: 8px; }
 .sherlock-say .sherlock-inpause { background: transparent; color: var(--muted); box-shadow: inset 0 0 0 1px var(--line); margin-left: auto; }
-@media (min-width: 760px) { .sherlock-inpause { display: none; } }
 @media (max-width: 759px) {
   .sherlock-stop, .sherlock-ghost span { display: none; }
   .sherlock-say, .sherlock-panel, .sherlock-cue { position: fixed; left: 10px !important; right: 10px !important; top: auto !important; bottom: max(88px, calc(env(safe-area-inset-bottom) + 76px)) !important; width: auto; max-width: none; border-radius: 22px; box-shadow: 0 -10px 40px rgb(20 30 50 / 22%), 0 0 0 1px var(--line); }
@@ -2496,3 +2495,7 @@ svg {
   .sherlock-panel { max-height: 72svh; transform-origin: bottom center; }
   .sherlock:has(.sherlock-panel) .sherlock-fab { display: none; }
 }
+.sherlock-stop { display: none; }
+
+.page-loading { min-height: 100svh; }
+.page-loading[data-page="activity"] { min-height: 75svh; }

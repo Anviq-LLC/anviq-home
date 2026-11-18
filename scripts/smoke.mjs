@@ -108,10 +108,11 @@ for (const [route, needle] of [["/explore/privacy", "Cloudflare Workers AI"], ["
     await sleep(150);
     cursor = !!(await page.$(".sherlock-ghost"));
   }
-  check("the tour shows a cursor and a Stop button", cursor && !!(await page.$(".sherlock-stop")));
-  await page.click(".sherlock-stop");
+  const stopButton = await page.waitForSelector(".sherlock-inpause", { timeout: 15000 }).catch(() => null);
+  check("the tour shows a cursor and a Stop button", cursor && !!stopButton);
+  await page.click(".sherlock-inpause");
   await sleep(500);
-  check("Stop ends the tour", !(await page.$(".sherlock-stop")));
+  check("Stop ends the tour", !(await page.$(".sherlock-inpause")));
   check("no page errors", errors.length === 0, errors[0] ?? "");
   await page.close();
 }
